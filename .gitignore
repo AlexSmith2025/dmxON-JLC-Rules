@@ -1,0 +1,31 @@
+# Только скрипт, правила и документация. Платы, схемы и выгрузки в репозиторий не попадают.
+# Script, rules and documentation only. Boards, schematics and outputs never go into the repository.
+*.brd
+*.sch
+*.lbr
+*.f3d
+*.fbrd
+*.fsch
+*.b#*
+*.s#*
+*.edru
+*.zip
+*.pdf
+*.csv
+*.gbr
+*.gbrjob
+*.xln
+*.drl
+*.GTL
+*.GBL
+*.GTS
+*.GBS
+*.GTP
+*.GBP
+*.GTO
+*.GBO
+*.GKO
+*.XLN
+_tmp/
+Thumbs.db
+desktop.ini

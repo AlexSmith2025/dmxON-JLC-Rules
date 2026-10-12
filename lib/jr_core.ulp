@@ -1,0 +1,290 @@
+// jr_core.ulp — версия, двуязычные строки, файлы, команды без окон, состояние между фазами
+// dmxON JLC Rules · dmxON by AlexSmith 2026 · см. LICENSE.md
+
+// ---------------------------------------------------------------- продукт
+
+string JR_NAME    = "dmxON JLC Rules";
+string JR_VERSION = "1.0.0";              // при каждой переделке поднимать (см. CHANGELOG.md)
+string JR_DATE    = "2026-10-09";
+string JR_AUTHOR  = "dmxON by AlexSmith";
+string JR_YEAR    = "2026";
+string JR_ID      = "dmxon_jlc";          // префикс настроек в eaglerc
+string FABKIT_ID  = "dmxon_fabkit";       // настройки dmxON FabKit (толщина и маска для заказа)
+
+string jr_title()
+{
+    return JR_NAME + " v" + JR_VERSION;
+}
+
+string jr_sign()
+{
+    return JR_NAME + " v" + JR_VERSION + " · " + JR_AUTHOR + " " + JR_YEAR;
+}
+
+// ---------------------------------------------------------------- строки
+
+string istr(int v)
+{
+    string s;
+    sprintf(s, "%d", v);
+    return s;
+}
+
+string trim(string s)
+{
+    int a = 0, b = strlen(s);
+    while (a < b) {
+        if (!isspace(s[a])) break;
+        a++;
+    }
+    while (b > a) {
+        if (!isspace(s[b - 1])) break;
+        b--;
+    }
+    return strsub(s, a, b - a);
+}
+
+int ends_with(string s, string p)
+{
+    int n = strlen(s) - strlen(p);
+    if (n < 0) return 0;
+    return strsub(s, n) == p;
+}
+
+string replace_all(string s, string a, string b)
+{
+    string r = "";
+    int la = strlen(a);
+    if (!la) return s;
+    int p = strstr(s, a);
+    while (p >= 0) {
+        r += strsub(s, 0, p) + b;
+        s = strsub(s, p + la);
+        p = strstr(s, a);
+    }
+    return r + s;
+}
+
+string num(real v)
+{
+    string s;
+    sprintf(s, "%.4f", v);
+    while (ends_with(s, "0")) s = strsub(s, 0, strlen(s) - 1);
+    if (ends_with(s, ".")) s = strsub(s, 0, strlen(s) - 1);
+    if (s == "-0") s = "0";
+    return s;
+}
+
+string to_win(string p)
+{
+    return replace_all(p, "/", "\\");
+}
+
+string home_from(string p)
+{
+    p = replace_all(p, "\\", "/");
+    int i = strstr(strupr(p), ":/USERS/");
+    if (i < 0) return "";
+    int e = strstr(p, "/", i + 8);
+    if (e < 0) return "";
+    return strsub(p, 0, e);
+}
+
+string h(string s)
+{
+    string t = "";
+    for (int i = 0; s[i]; i++) {
+        int c = s[i];
+        if (c == '&') t += "&amp;";
+        else if (c == '<') t += "&lt;";
+        else if (c == '>') t += "&gt;";
+        else if (c == '"') t += "&quot;";
+        else if (c > 126 || c < 0) {
+            string e;
+            sprintf(e, "&#%d;", c);
+            t += e;
+        }
+        else t += s[i];
+    }
+    return t;
+}
+
+// ---------------------------------------------------------------- двуязычные строки
+
+string L(string ru, string en)
+{
+    return ru + " / " + en;
+}
+
+string asc(string s)
+{
+    string t = "";
+    int i = 0, from = 0;
+    while (s[i]) {
+        if (s[i] > 127) {
+            if (i > from) t += strsub(s, from, i - from);
+            string e;
+            sprintf(e, "&#%d;", s[i]);
+            t += e;
+            from = i + 1;
+        }
+        i++;
+    }
+    if (from == 0) return s;
+    if (i > from) t += strsub(s, from, i - from);
+    return t;
+}
+
+// ---------------------------------------------------------------- файлы и команды
+
+int file_exists(string p)
+{
+    string a[];
+    return fileglob(a, p) > 0;
+}
+
+// Команды Windows выполняются без окон: через маленький VBS-запускальщик (wscript — оконная
+// программа, консоль не открывает). В Windows 11 иначе каждый вызов открывает окно Терминала.
+// Кавычки в команде передаются как ` и восстанавливаются в запускальщике.
+string jr_runner = "";
+
+string RUNNER_VBS =
+    "Option Explicit\r\n" +
+    "Dim sh, fso, mode, a, i, last, sz\r\n" +
+    "Set sh = CreateObject(\"WScript.Shell\")\r\n" +
+    "Set fso = CreateObject(\"Scripting.FileSystemObject\")\r\n" +
+    "mode = WScript.Arguments(0)\r\n" +
+    "a = Replace(WScript.Arguments(1), \"`\", Chr(34))\r\n" +
+    "If mode = \"run\" Then\r\n" +
+    "  WScript.Quit sh.Run(\"cmd.exe /s /c \" & Chr(34) & a & Chr(34), 0, True)\r\n" +
+    "ElseIf mode = \"wait\" Then\r\n" +
+    "  last = -1\r\n" +
+    "  For i = 1 To CInt(WScript.Arguments(2)) * 2\r\n" +
+    "    If fso.FileExists(a) Then\r\n" +
+    "      sz = fso.GetFile(a).Size\r\n" +
+    "      If sz > 0 And sz = last Then WScript.Quit 0\r\n" +
+    "      last = sz\r\n" +
+    "    End If\r\n" +
+    "    WScript.Sleep 500\r\n" +
+    "  Next\r\n" +
+    "  WScript.Quit 1\r\n" +
+    "End If\r\n";
+
+void runner_init(string dir)
+{
+    if (dir == "") return;
+    string p = dir + "/dmxon_jlc_run.vbs";
+    output(p, "wb") printf("%s", RUNNER_VBS);
+    if (filesize(p) <= 0) return;
+    // Windows Script Host бывает отключён политикой — тогда работаем через cmd.exe
+    if (system("wscript.exe //nologo //B \"" + to_win(p) + "\" run \"exit 7\"") == 7) jr_runner = p;
+}
+
+int shell(string cmd)
+{
+    if (jr_runner != "")
+        return system("wscript.exe //nologo //B \"" + to_win(jr_runner) + "\" run \"" + replace_all(cmd, "\"", "`") + "\"");
+    return system("cmd.exe /c " + cmd);
+}
+
+string qp(string p)
+{
+    return "\"" + to_win(p) + "\"";
+}
+
+// ---------------------------------------------------------------- состояние между фазами (key=value)
+
+string st_k[], st_v[];
+int n_st = 0;
+
+void st_set(string k, string v)
+{
+    for (int i = 0; i < n_st; i++) {
+        if (st_k[i] == k) { st_v[i] = v; return; }
+    }
+    st_k[n_st] = k;
+    st_v[n_st] = v;
+    n_st++;
+}
+
+void st_seti(string k, int v)
+{
+    st_set(k, istr(v));
+}
+
+string st_get(string k)
+{
+    for (int i = 0; i < n_st; i++)
+        if (st_k[i] == k) return st_v[i];
+    return "";
+}
+
+int st_geti(string k)
+{
+    return strtol(st_get(k));
+}
+
+void st_save(string path)
+{
+    output(path, "wt") {
+        for (int i = 0; i < n_st; i++) {
+            string v = replace_all(st_v[i], "\n", "\\n");
+            printf("%s=%s\n", st_k[i], h(v));
+        }
+    }
+}
+
+// символ по коду Юникода: char в ULP 8-битный, поэтому берём символ из таблиц-литералов
+string UNI_CYR = "ЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюяѐёђѓєѕіїјљњћќѝўџѠѡѢѣѤѥѦѧѨѩѪѫѬѭѮѯѰѱѲѳѴѵѶѷѸѹѺѻѼѽѾѿҀҁ҂҃҄҅҆҇҈҉ҊҋҌҍҎҏҐґҒғҔҕҖҗҘҙҚқҜҝҞҟҠҡҢңҤҥҦҧҨҩҪҫҬҭҮүҰұҲҳҴҵҶҷҸҹҺһҼҽҾҿӀӁӂӃӄӅӆӇӈӉӊӋӌӍӎӏӐӑӒӓӔӕӖӗӘәӚӛӜӝӞӟӠӡӢӣӤӥӦӧӨөӪӫӬӭӮӯӰӱӲӳӴӵӶӷӸӹӺӻӼӽӾӿ";
+string UNI_LAT = " ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ";
+string UNI_PUN = "–—‘’“”„•…№™←↑→↓−≤≥≈≠×‰€′″";
+int UNI_PUN_CODE[] = { 8211, 8212, 8216, 8217, 8220, 8221, 8222, 8226, 8230, 8470, 8482, 8592, 8593, 8594, 8595, 8722, 8804, 8805, 8776, 8800, 215, 8240, 8364, 8242, 8243 };
+
+string uchar(int c)
+{
+    if (c < 128) { char a = c; string t = ""; t += a; return t; }
+    if (c >= 0x400 && c < 0x500) return strsub(UNI_CYR, c - 0x400, 1);
+    if (c >= 0xA0 && c < 0x100) return strsub(UNI_LAT, c - 0xA0, 1);
+    for (int i = 0; i < 25; i++)
+        if (UNI_PUN_CODE[i] == c) return strsub(UNI_PUN, i, 1);
+    return "?";
+}
+
+string unh(string s)
+{
+    string t = "";
+    int i = 0;
+    while (s[i]) {
+        if (s[i] == '&') {
+            int e = strstr(s, ";", i);
+            if (e > i) {
+                string ent = strsub(s, i + 1, e - i - 1);
+                if (ent == "amp") t += "&";
+                else if (ent == "lt") t += "<";
+                else if (ent == "gt") t += ">";
+                else if (ent == "quot") t += "\"";
+                else if (ent[0] == '#') t += uchar(strtol(strsub(ent, 1))); else t += "&" + ent + ";";
+                i = e + 1;
+                continue;
+            }
+        }
+        t += s[i];
+        i++;
+    }
+    return t;
+}
+
+void st_load(string path)
+{
+    string lines[];
+    n_st = 0;
+    if (!file_exists(path)) return;
+    int n = fileread(lines, path);
+    for (int i = 0; i < n; i++) {
+        int p = strstr(lines[i], "=");
+        if (p <= 0) continue;
+        st_k[n_st] = strsub(lines[i], 0, p);
+        st_v[n_st] = replace_all(unh(trim(strsub(lines[i], p + 1))), "\\n", "\n");
+        n_st++;
+    }
+}

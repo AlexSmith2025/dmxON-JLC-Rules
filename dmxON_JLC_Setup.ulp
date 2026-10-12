@@ -1,0 +1,877 @@
+#usage "en: <b>dmxON JLC Rules</b> · JLCPCB setup — sets up the open board for JLCPCB in one run<p>"
+       "Design rules for 2, 4, 6 or 8 layers (profiles Standard / Dense / Extreme), the JLCPCB layer stack-up and "
+       "board thickness, net classes not below the minimum, the rule pack and CAM jobs installed into your EAGLE folders, "
+       "a pre-flight check (silkscreen, holes, board size, copper outside the stack-up, approved DRC messages), DRC and a summary. "
+       "The previous rules are backed up and can be restored with one button.<p>"
+       "<b>Usage:</b> run from the board editor: <tt>RUN dmxON_JLC_Setup</tt><br>"
+       "Batch: <tt>RUN dmxON_JLC_Setup -batch [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] "
+       "[-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit]</tt><br>"
+       "Rule pack only: <tt>RUN dmxON_JLC_Setup -export &lt;folder&gt;</tt><p>"
+       "<author>dmxON by AlexSmith 2026 · free to use with attribution · see LICENSE.md</author>",
+       "ru: <b>dmxON JLC Rules</b> · настройка под JLCPCB — готовит открытую плату к заказу на JLCPCB за один запуск<p>"
+       "Правила для 2, 4, 6 или 8 слоёв (профили Стандарт / Плотный / Предельный), стек слоёв и толщина JLCPCB, "
+       "классы цепей не ниже минимума, пакет правил и задания CAM в ваших папках EAGLE, предварительная проверка "
+       "(шелкография, отверстия, размер платы, медь вне стека, одобренные ошибки DRC), DRC и итог. Прежние правила сохраняются "
+       "и возвращаются одной кнопкой.<p>"
+       "<b>Запуск:</b> из редактора платы: <tt>RUN dmxON_JLC_Setup</tt><br>"
+       "Пакетный режим: <tt>RUN dmxON_JLC_Setup -batch [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] "
+       "[-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit]</tt><br>"
+       "Только пакет правил: <tt>RUN dmxON_JLC_Setup -export &lt;папка&gt;</tt><p>"
+       "<author>dmxON by AlexSmith 2026 · свободное использование с указанием автора · см. LICENSE.md</author>"
+
+// dmxON JLC Rules · JLCPCB setup · dmxON by AlexSmith 2026
+// Лицензия: LICENSE.md (использование бесплатно с указанием автора; копирование кода,
+// изменение и коммерческое использование запрещены).
+//
+// Как устроено:
+//   шаг 0               — DRC SAVE текущих правил (резервная копия + настоящий стек платы), RUN -stage2
+//   фаза 1 (этот файл)  — разбор платы, диалог, файл правил, предварительная проверка;
+//                         в конце отдаёт Fusion цепочку команд (exit)
+//   фаза 2 (команды)    — DRC LOAD, CLASS, RATSNEST, DRC, RUN этого ULP -summary
+//   фаза 3 (-summary)   — итог: ошибки DRC по видам, замечания, кнопка «Вернуть прежние правила»
+
+#include "lib/jr_core.ulp"
+#include "lib/jr_stack.ulp"
+#include "lib/jr_rules.ulp"
+
+// ---------------------------------------------------------------- общие мелочи
+
+string L2(string ru, string en)
+{
+    return ru + "\n" + en;
+}
+
+string js_key(string k)
+{
+    return JR_ID + "." + k;
+}
+
+string cfg_part(string s)
+{
+    string t = "";
+    for (int i = 0; s[i]; i++) {
+        char c = s[i];
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) t += c;
+        else t += "_";
+    }
+    return t;
+}
+
+// путь в команде Fusion: в одинарных кавычках
+string js_cq(string p)
+{
+    return "'" + replace_all(p, "'", "''") + "'";
+}
+
+string js_dir(string p)
+{
+    p = replace_all(p, "\\", "/");
+    while (ends_with(p, "/")) p = strsub(p, 0, strlen(p) - 1);
+    return p;
+}
+
+string MASKS[] = { "Green", "Purple", "Red", "Yellow", "Blue", "White", "Black" };
+int N_MASKS = 7;
+string LAYER_ITEMS[] = { "2", "4", "6", "8" };
+string PROF_ITEMS[]  = { "Стандарт · Standard", "Плотный · Dense", "Предельный · Extreme" };
+string THICK_ITEMS[] = { "0.4", "0.6", "0.8", "1.0", "1.2", "1.6", "2.0" };
+string OUT_ITEMS[]   = { "1 oz (35 µm)", "2 oz (70 µm)" };
+string IN_ITEMS[]    = { "0.5 oz", "1 oz", "2 oz" };
+
+string js_home = "";
+string js_mask = "Green";
+
+// ---------------------------------------------------------------- пакет правил без платы
+
+if (argc > 2 && argv[1] == "-export") {
+    string dir = js_dir(argv[2]);
+    js_home = home_from(argv[0]);
+    if (js_home != "") runner_init(js_home + "/AppData/Local/Temp");
+    shell("mkdir " + qp(dir) + " 2>nul");
+    int n_ok = jr_write_pack(dir, dir);
+    if (!(argc > 3 && argv[3] == "-quiet"))
+        dlgMessageBox(L("Пакет правил записан", "Rule pack written") + ": " + istr(n_ok) + " " + L("файлов", "files") + "\n" + dir, "OK");
+    exit(0);
+}
+
+// ---------------------------------------------------------------- разбор платы
+
+string js_base = "", js_bname = "";
+int js_cu_obj[], js_cu_set[];          // медь есть на слое / слой в стеке платы
+int js_n_obj = 0, js_n_set = 0, js_detect = 2;
+real js_x1 = 0, js_y1 = 0, js_x2 = 0, js_y2 = 0;
+int js_outline = 0;
+int js_napp = 0;                       // одобренных ошибок DRC на плате
+
+// классы цепей
+int js_ncl = 0;
+int js_cl_num[];
+string js_cl_name[];
+real js_cl_w[], js_cl_c[], js_cl_d[];
+
+// значения для предварительной проверки: вид|значение -> количество
+string hv_k[];
+real hv_v[];
+int hv_c[];
+int n_hv = 0;
+
+void hv_add(string k, real v)
+{
+    v = round(v * 1000) / 1000.0;
+    for (int i = 0; i < n_hv; i++)
+        if (hv_k[i] == k && abs(hv_v[i] - v) < 0.0005) { hv_c[i]++; return; }
+    hv_k[n_hv] = k; hv_v[n_hv] = v; hv_c[n_hv] = 1; n_hv++;
+}
+
+// сколько значений вида k меньше порога и самое малое из них
+int hv_below(string k, real lim)
+{
+    int n = 0;
+    for (int i = 0; i < n_hv; i++)
+        if (hv_k[i] == k && hv_v[i] < lim - 0.0005) n += hv_c[i];
+    return n;
+}
+
+real hv_min(string k)
+{
+    real m = 1e9;
+    for (int i = 0; i < n_hv; i++)
+        if (hv_k[i] == k && hv_v[i] < m) m = hv_v[i];
+    return m;
+}
+
+int hv_count(string k)
+{
+    int n = 0;
+    for (int i = 0; i < n_hv; i++) if (hv_k[i] == k) n += hv_c[i];
+    return n;
+}
+
+int js_silk(int l)
+{
+    return l == 21 || l == 22 || l == 25 || l == 26;
+}
+
+void js_bbox(real x, real y)
+{
+    if (!js_outline) { js_x1 = js_x2 = x; js_y1 = js_y2 = y; js_outline = 1; return; }
+    if (x < js_x1) js_x1 = x;
+    if (x > js_x2) js_x2 = x;
+    if (y < js_y1) js_y1 = y;
+    if (y > js_y2) js_y2 = y;
+}
+
+void js_text(UL_TEXT T)
+{
+    if (!js_silk(T.layer)) return;
+    real sz = u2mm(T.size);
+    hv_add("txt_h", sz);
+    hv_add("txt_s", sz * T.ratio / 100.0);
+}
+
+void js_scan()
+{
+    // у каждого цикла своё имя переменной: в ULP имя живёт до конца блока
+    board(B) {
+        js_bname = B.name;
+        js_base = filesetext(filename(B.name), "");
+        B.layers(LY) {
+            if (LY.number >= 1 && LY.number <= 16 && LY.used) js_cu_obj[LY.number] = 1;
+        }
+        B.signals(SG) {
+            SG.wires(SW) {
+                if (SW.layer >= 1 && SW.layer <= 16) { js_cu_obj[SW.layer] = 1; if (SW.width > 0) hv_add("trk", u2mm(SW.width)); }
+            }
+            // полигоны: в Fusion цикл polygons() устарел — у цепей заливки polyPours, у платы и корпусов polyShapes
+            SG.polyPours(SPP) {
+                if (SPP.layer >= 1 && SPP.layer <= 16) js_cu_obj[SPP.layer] = 1;
+            }
+            SG.vias(SV) {
+                js_cu_obj[SV.start] = 1;
+                js_cu_obj[SV.end] = 1;
+                hv_add("via", u2mm(SV.drill));
+            }
+        }
+        B.wires(BW) {
+            if (BW.layer >= 1 && BW.layer <= 16) js_cu_obj[BW.layer] = 1;
+            if (BW.layer == 20) {
+                js_bbox(u2mm(BW.x1), u2mm(BW.y1)); js_bbox(u2mm(BW.x2), u2mm(BW.y2));
+                if (BW.arc) {
+                    real ar = u2mm(BW.arc.radius), axc = u2mm(BW.arc.xc), ayc = u2mm(BW.arc.yc);
+                    js_bbox(axc - ar, ayc - ar); js_bbox(axc + ar, ayc + ar);
+                }
+            }
+            if (js_silk(BW.layer) && BW.width > 0) hv_add("silk", u2mm(BW.width));
+        }
+        B.circles(BC) {
+            if (BC.layer == 20) {
+                real cr = u2mm(BC.radius);
+                js_bbox(u2mm(BC.x) - cr, u2mm(BC.y) - cr); js_bbox(u2mm(BC.x) + cr, u2mm(BC.y) + cr);
+            }
+            if (BC.layer >= 1 && BC.layer <= 16) js_cu_obj[BC.layer] = 1;
+        }
+        B.polyShapes(BPS) {
+            if (BPS.layer >= 1 && BPS.layer <= 16) js_cu_obj[BPS.layer] = 1;
+        }
+        B.rectangles(BR) {
+            if (BR.layer >= 1 && BR.layer <= 16) js_cu_obj[BR.layer] = 1;
+        }
+        B.texts(BT) {
+            if (BT.layer >= 1 && BT.layer <= 16) js_cu_obj[BT.layer] = 1;
+            js_text(BT);
+        }
+        B.holes(BH) { hv_add("npth", u2mm(BH.drill)); }
+        B.elements(E) {
+            E.footprint.contacts(CT) {
+                if (CT.smd) { if (CT.smd.layer >= 1 && CT.smd.layer <= 16) js_cu_obj[CT.smd.layer] = 1; }
+            }
+            E.footprint.wires(PW) {
+                if (PW.layer >= 1 && PW.layer <= 16) js_cu_obj[PW.layer] = 1;
+                if (PW.layer == 20) { js_bbox(u2mm(PW.x1), u2mm(PW.y1)); js_bbox(u2mm(PW.x2), u2mm(PW.y2)); }
+                if (js_silk(PW.layer) && PW.width > 0) hv_add("silk", u2mm(PW.width));
+            }
+            E.footprint.polyShapes(FPS) {
+                if (FPS.layer >= 1 && FPS.layer <= 16) js_cu_obj[FPS.layer] = 1;
+            }
+            E.footprint.circles(PC) {
+                if (js_silk(PC.layer) && PC.width > 0) hv_add("silk", u2mm(PC.width));
+            }
+            E.footprint.holes(PH) { hv_add("npth", u2mm(PH.drill)); }
+            E.footprint.texts(PT) { js_text(PT); }
+            E.texts(ET) { js_text(ET); }
+        }
+        B.errors(ER) {
+            if (ER.state == ERROR_STATE_APPROVED) js_napp++;
+        }
+        B.classes(CL) {
+            if (CL.name != "") {
+                js_cl_num[js_ncl] = CL.number;
+                js_cl_name[js_ncl] = CL.name;
+                js_cl_w[js_ncl] = u2mm(CL.width);
+                js_cl_c[js_ncl] = u2mm(CL.clearance);
+                js_cl_d[js_ncl] = u2mm(CL.drill);
+                js_ncl++;
+            }
+        }
+    }
+    js_n_obj = 0; js_n_set = 0;
+    int any[];
+    for (int l = 1; l <= 16; l++) {
+        if (js_cu_obj[l]) js_n_obj++;
+        if (js_cu_set[l]) js_n_set++;
+        any[l] = js_cu_obj[l] || js_cu_set[l];
+    }
+    int n = 0;
+    for (int k = 1; k <= 16; k++) if (any[k]) n++;
+    if (n < 2) n = 2;
+    if (n % 2) n++;
+    js_detect = n;
+}
+
+// слои стека из файла правил: layerSetup = (1+2*15+16)
+int js_read_setup(string dru)
+{
+    string lines[];
+    int n = fileread(lines, dru), found = 0;
+    for (int i = 0; i < n; i++) {
+        if (strstr(lines[i], "layerSetup") != 0) continue;
+        string v = strsub(lines[i], strstr(lines[i], "=") + 1);
+        int num_l = 0;
+        for (int k = 0; v[k] || num_l; k++) {
+            if (v[k] >= '0' && v[k] <= '9') num_l = num_l * 10 + (v[k] - '0');
+            else {
+                if (num_l >= 1 && num_l <= 16) { js_cu_set[num_l] = 1; found = 1; }
+                num_l = 0;
+                if (!v[k]) break;
+            }
+        }
+    }
+    return found;
+}
+
+string js_list(int sel)
+{
+    string s = "";
+    for (int l = 1; l <= 16; l++) {
+        int on = sel == 0 ? js_cu_obj[l] : js_cu_set[l];
+        if (on) s += (s == "" ? "" : " ") + istr(l);
+    }
+    return s == "" ? "—" : s;
+}
+
+// слои меди для выбранного числа: сначала внутренние слои с медью; если стек платы уже нужного
+// размера — его номера; иначе стандартные (6 слоёв: 2 3 14 15), затем остальные из стека
+void js_make_layers()
+{
+    int need = jr_n - 2, np = 0, nset = 0;
+    int pick[];
+    for (int l = 2; l <= 15; l++) {
+        pick[l] = 0;
+        if (js_cu_set[l] || js_cu_obj[l]) nset++;
+    }
+    for (int a = 2; a <= 15 && np < need; a++)
+        if (js_cu_obj[a]) { pick[a] = 1; np++; }
+    if (nset == need)
+        for (int b = 2; b <= 15 && np < need; b++)
+            if (js_cu_set[b] && !pick[b]) { pick[b] = 1; np++; }
+    jr_default_layers();
+    int def[];
+    for (int i = 0; i < jr_n; i++) def[i] = jr_lay[i];
+    for (int j = 1; j < jr_n - 1 && np < need; j++)
+        if (!pick[def[j]]) { pick[def[j]] = 1; np++; }
+    for (int b2 = 2; b2 <= 15 && np < need; b2++)
+        if (js_cu_set[b2] && !pick[b2]) { pick[b2] = 1; np++; }
+    for (int c = 2; c <= 15 && np < need; c++)
+        if (!pick[c]) { pick[c] = 1; np++; }
+    int k = 0;
+    jr_lay[k++] = 1;
+    for (int m = 2; m <= 15; m++) if (pick[m]) jr_lay[k++] = m;
+    jr_lay[k++] = 16;
+}
+
+int js_in_stack(int l)
+{
+    for (int i = 0; i < jr_n; i++) if (jr_lay[i] == l) return 1;
+    return 0;
+}
+
+// ---------------------------------------------------------------- предварительная проверка
+
+string pf_sev[], pf_ru[], pf_en[];
+int n_pf = 0;
+
+void pf(string sev, string ru, string en)
+{
+    pf_sev[n_pf] = sev; pf_ru[n_pf] = ru; pf_en[n_pf] = en; n_pf++;
+}
+
+real JS_MAXW[] = { 670, 663, 656, 656 };
+real JS_MAXH[] = { 600, 593, 586, 586 };
+
+void js_preflight()
+{
+    n_pf = 0;
+    string lost = "";
+    for (int l = 1; l <= 16; l++) if (js_cu_obj[l] && !js_in_stack(l)) lost += (lost == "" ? "" : ", ") + istr(l);
+    if (lost != "")
+        pf("E", "Медь на слоях " + lost + " не входит в выбранный стек из " + istr(jr_n) + " слоёв.",
+                "Copper on layers " + lost + " is outside the selected " + istr(jr_n) + "-layer stack-up.");
+    if (!js_outline)
+        pf("E", "Нет контура платы (слой 20 Dimension).", "No board outline (layer 20 Dimension).");
+    else {
+        real w = js_x2 - js_x1, hh = js_y2 - js_y1;
+        real a = max(w, hh), b = min(w, hh);
+        int ix = jr_n / 2 - 1;
+        if (b < 3) pf("E", "Плата меньше 3 × 3 мм — JLCPCB не делает.", "The board is smaller than 3 × 3 mm — not manufacturable at JLCPCB.");
+        if (a > JS_MAXW[ix] || b > JS_MAXH[ix])
+            pf("E", "Плата " + num(round(w * 10) / 10.0) + " × " + num(round(hh * 10) / 10.0) + " мм больше предела " + num(JS_MAXW[ix]) + " × " + num(JS_MAXH[ix]) + " мм.",
+                    "Board " + num(round(w * 10) / 10.0) + " × " + num(round(hh * 10) / 10.0) + " mm exceeds " + num(JS_MAXW[ix]) + " × " + num(JS_MAXH[ix]) + " mm.");
+    }
+    int n;
+    n = hv_below("trk", jr_tw);
+    if (n) pf("E", "Дорожек тоньше " + num(jr_tw) + " мм: " + istr(n) + " (самая тонкая " + num(hv_min("trk")) + ") — DRC отметит.",
+                   "Tracks thinner than " + num(jr_tw) + " mm: " + istr(n) + " (thinnest " + num(hv_min("trk")) + ") — DRC will flag them.");
+    n = hv_below("via", jr_vd);
+    if (n) pf("E", "Переходных со сверлом меньше " + num(jr_vd) + " мм: " + istr(n) + " (наименьшее " + num(hv_min("via")) + ").",
+                   "Vias drilled below " + num(jr_vd) + " mm: " + istr(n) + " (smallest " + num(hv_min("via")) + ").");
+    n = hv_below("via", 0.3);
+    if (n && jr_prof == 2) pf("W", "Переходных меньше 0.3 мм: " + istr(n) + " — доплата за малые отверстия.",
+                              "Vias below 0.3 mm: " + istr(n) + " — small-hole surcharge.");
+    n = hv_below("npth", 0.5);
+    if (n) pf("W", "Неметаллизированных отверстий меньше 0.5 мм: " + istr(n) + " (наименьшее " + num(hv_min("npth")) + ") — у JLCPCB минимум 0.5.",
+                   "Non-plated holes below 0.5 mm: " + istr(n) + " (smallest " + num(hv_min("npth")) + ") — JLCPCB minimum is 0.5.");
+    n = hv_below("txt_h", 0.98);
+    if (n) pf("W", "Надписей шелкографии ниже 1.0 мм: " + istr(n) + " (самая мелкая " + num(hv_min("txt_h")) + ") — могут не читаться.",
+                   "Silkscreen texts below 1.0 mm: " + istr(n) + " (smallest " + num(hv_min("txt_h")) + ") — may be unreadable.");
+    n = hv_below("txt_s", 0.145);
+    if (n) pf("W", "Надписей с линией тоньше 0.15 мм: " + istr(n) + " — увеличьте ratio шрифта.",
+                   "Texts with strokes under 0.15 mm: " + istr(n) + " — increase the font ratio.");
+    n = hv_below("silk", 0.145);
+    if (n) pf("I", "Линий шелкографии тоньше 0.15 мм: " + istr(n) + " (самая тонкая " + num(hv_min("silk")) + ") — напечатаются тонко или с разрывами.",
+                   "Silkscreen lines thinner than 0.15 mm: " + istr(n) + " (thinnest " + num(hv_min("silk")) + ") — will print thin or broken.");
+    if (js_napp)
+        pf("W", "На плате одобрено замечаний DRC: " + istr(js_napp) + ". Проверка с новыми правилами удалит одобрения, которые перестанут совпадать, — кнопка «Вернуть» их не восстановит. Сохраните версию платы до настройки.",
+                "The board has " + istr(js_napp) + " approved DRC messages. A check with the new rules drops approvals that no longer match — «Restore» cannot bring them back. Save a board version first.");
+    for (int i = 0; i < js_ncl; i++) {
+        int low = (js_cl_w[i] > 0 && js_cl_w[i] < jr_tw - 0.0005) || (js_cl_c[i] > 0 && js_cl_c[i] < jr_cl - 0.0005) || (js_cl_d[i] > 0 && js_cl_d[i] < jr_vd - 0.0005);
+        if (low) pf("W", "Класс цепей " + istr(js_cl_num[i]) + " «" + js_cl_name[i] + "» ниже минимума JLCPCB.",
+                         "Net class " + istr(js_cl_num[i]) + " «" + js_cl_name[i] + "» is below the JLCPCB minimum.");
+    }
+}
+
+// ---------------------------------------------------------------- классы цепей не ниже минимума
+
+string js_cls_cmd = "", js_cls_back = "", js_cls_txt = "";
+
+string js_class_line(int nr, string name, real w, real c, real d)
+{
+    return "CLASS " + istr(nr) + " " + js_cq(name) + " " + jr_mm(w) + " " + jr_mm(c) + " " + jr_mm(d) + ";\n";
+}
+
+void js_classes()
+{
+    js_cls_cmd = ""; js_cls_back = ""; js_cls_txt = "";
+    for (int i = 0; i < js_ncl; i++) {
+        real w = js_cl_w[i], c = js_cl_c[i], d = js_cl_d[i];
+        int base0 = js_cl_num[i] == 0;
+        real nw = (base0 || w > 0) ? max(w, jr_tw) : w;
+        real nc = (base0 || c > 0) ? max(c, jr_cl) : c;
+        real nd = (base0 || d > 0) ? max(d, jr_vd) : d;
+        if (abs(nw - w) < 0.0005 && abs(nc - c) < 0.0005 && abs(nd - d) < 0.0005) continue;
+        js_cls_cmd += js_class_line(js_cl_num[i], js_cl_name[i], nw, nc, nd);
+        js_cls_back += js_class_line(js_cl_num[i], js_cl_name[i], w, c, d);
+        js_cls_txt += istr(js_cl_num[i]) + " «" + js_cl_name[i] + "»: " + num(w) + "/" + num(c) + "/" + num(d) + " → " + num(nw) + "/" + num(nc) + "/" + num(nd) + "\n";
+    }
+}
+
+// ---------------------------------------------------------------- предпросмотр
+
+string js_color(string sev)
+{
+    if (sev == "E") return "#c0392b";
+    if (sev == "W") return "#b9770e";
+    return "#566573";
+}
+
+string js_row(string ru, string en, string v)
+{
+    return "<tr><td><b>" + ru + "</b> <font color=\"#7f8c8d\">" + en + "</font></td><td>" + v + "</td></tr>";
+}
+
+string js_stack_html()
+{
+    string s = "<table cellspacing=\"0\" cellpadding=\"1\">";
+    for (int i = 0; i < jr_n; i++) {
+        real cu = (i == 0 || i == jr_n - 1) ? jr_cuo : jr_cui;
+        s += "<tr><td><font color=\"#b9770e\">L" + istr(jr_lay[i]) + "</font></td><td>" + L("медь", "copper") + " " + num(cu) + "</td></tr>";
+        if (i < jr_nd) {
+            string kind = jr_dk[i] == "C" ? L("ядро", "core") : L("препрег", "prepreg") + " " + jr_dg[i];
+            s += "<tr><td></td><td><font color=\"#566573\">" + kind + " " + num(jr_dt[i]) + " · Er " + jr_der[i] + "</font></td></tr>";
+        }
+    }
+    return s + "</table>";
+}
+
+string js_preview()
+{
+    jr_calc();
+    js_preflight();
+    string s = "<b>" + jr_name() + "</b> — " + JR_PNOTE_RU[jr_prof] + " <font color=\"#7f8c8d\">/ " + JR_PNOTE_EN[jr_prof] + "</font><br>";
+    string tot;
+    sprintf(tot, "%.3f", jr_total);
+    s += "<table cellspacing=\"0\" cellpadding=\"2\">";
+    s += js_row("Стек", "Stack", jr_setup_string() + " · " + jr_brief(1) + " · " + L("расчёт", "computed") + " " + tot + " мм");
+    s += js_row("Дорожка / зазор", "Track / space", num(jr_tw) + " / " + num(jr_cl) + " мм · " + L("площадки разных цепей", "pad to pad") + " " + num(jr_smd));
+    s += js_row("Переходное", "Via", jr_via_txt() + " мм · " + L("поясок", "ring") + " ≥ " + num(jr_vr) + (jr_n > 2 ? " · " + L("внутри", "inner") + " ≥ " + num(jr_vri) : ""));
+    s += js_row("Поясок выводов", "PTH ring", num(jr_pr) + " мм" + (jr_n > 2 ? " · " + L("внутри", "inner") + " " + num(jr_pri) : ""));
+    s += js_row("До края / между отв.", "Edge / hole gap", num(jr_edge) + " / " + num(jr_hh) + " мм" + (jr_vcut ? " · V-cut" : ""));
+    string dam = (js_mask == "White" || js_mask == "Black") ? "0.13" : "0.10";
+    if (jr_dam > 0.15) dam = num(jr_dam);
+    s += js_row("Маска", "Mask", "+" + num(jr_mask) + " · " + (jr_tented ? L("переходные ≤ 0.5 под маской", "vias ≤ 0.5 tented") : L("переходные открыты", "vias open")) +
+                 " · " + L("перемычка", "dam") + " ≥ " + dam + " (" + js_mask + ")");
+    s += "</table>";
+    string w[];
+    int nw = strsplit(w, jr_warn_ru, '\n');
+    string we[];
+    strsplit(we, jr_warn_en, '\n');
+    for (int i = 0; i < nw; i++)
+        if (w[i] != "") s += "<font color=\"#b9770e\">• " + w[i] + "</font> <font color=\"#7f8c8d\">" + we[i] + "</font><br>";
+    s += "<hr><b>" + L("Проверка платы", "Board check") + "</b><br>";
+    if (!n_pf) s += "<font color=\"#1e8449\">" + L("Замечаний нет.", "No findings.") + "</font><br>";
+    for (int j = 0; j < n_pf; j++)
+        s += "<font color=\"" + js_color(pf_sev[j]) + "\">• " + pf_ru[j] + "</font> <font color=\"#7f8c8d\">" + pf_en[j] + "</font><br>";
+    s += "<hr><b>" + L("Слои стека", "Stack-up") + "</b>" + js_stack_html();
+    return s;
+}
+
+// ---------------------------------------------------------------- итог после DRC (фаза 3)
+
+// виды ошибок DRC (EAGLE и Fusion): сначала частные названия, общий «зазор» — последним
+string ERR_KEY[] = { "outline", "dimension", "via - restrict", "restrict", "exclude", "keepout", "overlap", "drill dist",
+                     "drill", "width", "air", "stub", "length", "gap", "angle", "mask", "stop", "font", "layer", "polygon",
+                     "grid", "micro", "blind", "clearance" };
+string ERR_RU[]  = { "медь у края платы", "медь у края платы", "переходное в запретной зоне", "медь в запретной зоне",
+                     "детали в зоне исключения", "зона запрета", "перекрытие разных цепей", "отверстия слишком близко",
+                     "сверло меньше минимума", "ширина меньше минимума", "неразведённые соединения", "обрывок дорожки",
+                     "согласование длин", "узкая щель", "острый угол", "маска", "маска", "текст не векторным шрифтом",
+                     "объект на неподходящем слое", "ошибка полигона", "вне сетки", "микропереходное", "глухое переходное",
+                     "зазор между цепями" };
+int N_ERR = 24;
+
+string js_err_ru(string d)
+{
+    string l = strlwr(d);
+    for (int i = 0; i < N_ERR; i++)
+        if (strstr(l, ERR_KEY[i]) >= 0) return ERR_RU[i];
+    return "";
+}
+
+// после смены правил: пересчитать полигоны и сразу проверить — иначе список ошибок Fusion
+// остаётся от прежних правил, и обращение к нему может уронить программу
+string js_refresh()
+{
+    return "RATSNEST;\nDRC;\n";
+}
+
+string js_summary(string stfile)
+{
+    st_load(stfile);
+    string ed[];
+    int ec[];
+    int ne = 0, n_act = 0, n_ok = 0, checked = 0, n_warn = 0, n_drill = 0;
+    board(B) {
+        checked = B.checked;
+        B.errors(ER) {
+            if (ER.state != ERROR_STATE_ACTIVE) n_ok++;
+            else if (ER.type == ERROR_TYPE_WARNING) n_warn++;
+            else {
+                n_act++;
+                if (strstr(strlwr(ER.description), "drill") >= 0 && strstr(strlwr(ER.description), "dist") < 0) n_drill++;
+                int f = -1;
+                for (int i = 0; i < ne; i++) if (ed[i] == ER.description) f = i;
+                if (f < 0) { ed[ne] = ER.description; ec[ne] = 0; f = ne; ne++; }
+                ec[f]++;
+            }
+        }
+    }
+    string s = "<b>" + st_get("name") + "</b> " + L("загружены в плату", "loaded into the board") + " <b>" + st_get("base") + "</b><br>";
+    s += "<font color=\"#7f8c8d\">" + st_get("brief") + "</font><br>";
+    if (st_get("bak") != "") s += L("Прежние правила сохранены", "Previous rules saved") + ": <tt>" + st_get("bak") + "</tt><br>";
+    if (st_get("cls") != "") s += "<br><b>" + L("Классы цепей подняты до минимума", "Net classes raised to the minimum") + "</b> <font color=\"#7f8c8d\">(" +
+                                  L("дорожка/зазор/сверло, мм", "track/space/drill, mm") + ")</font><br>" + replace_all(st_get("cls"), "\n", "<br>");
+    if (st_get("inst") != "") s += "<br>" + st_get("inst") + "<br>";
+    s += "<hr><b>DRC</b><br>";
+    if (!checked) s += L("Fusion не сообщил результат проверки — откройте DRC вручную.", "Fusion reported no DRC result — open DRC manually.") + "<br>";
+    else if (!n_act) s += "<font color=\"#1e8449\"><b>" + L("Ошибок нет", "No errors") + "</b></font>" + (n_warn ? " · " + L("предупреждений", "warnings") + ": " + istr(n_warn) : "") +
+                          (n_ok ? " · " + L("одобрено", "approved") + ": " + istr(n_ok) : "") + "<br>";
+    else {
+        s += "<font color=\"#c0392b\"><b>" + L("Ошибок", "Errors") + ": " + istr(n_act) + "</b></font>" + (n_warn ? " · " + L("предупреждений", "warnings") + ": " + istr(n_warn) : "") +
+             (n_ok ? " · " + L("одобрено", "approved") + ": " + istr(n_ok) : "") + "<br>";
+        s += "<table cellspacing=\"0\" cellpadding=\"2\">";
+        for (int i = 0; i < ne; i++) {
+            string ru = js_err_ru(ed[i]);
+            s += "<tr><td align=\"right\"><b>" + istr(ec[i]) + "</b></td><td>" + (ru != "" ? ru + " <font color=\"#7f8c8d\">" + ed[i] + "</font>" : ed[i]) + "</td></tr>";
+        }
+        s += "</table>";
+        if (n_drill && st_geti("prof") < 2)
+            s += "<font color=\"#b9770e\">" + L("Сверло меньше " + st_get("vd") + " мм: у JLCPCB отверстия меньше 0.3 мм стоят дороже — увеличьте сверло или выберите профиль «Предельный».",
+                                                "Drills below " + st_get("vd") + " mm: holes under 0.3 mm cost extra at JLCPCB — enlarge them or choose the Extreme profile.") + "</font><br>";
+        s += "<font color=\"#7f8c8d\">" + L("Список ошибок — панель ERRORS; правила — команда DRC.", "Error list — ERRORS panel; rules — DRC command.") + "</font><br>";
+    }
+    int npf = st_geti("npf");
+    if (npf) {
+        s += "<hr><b>" + L("Проверка платы", "Board check") + "</b><br>";
+        for (int j = 0; j < npf; j++) {
+            string sev = st_get("pfs" + istr(j));
+            s += "<font color=\"" + js_color(sev) + "\">• " + st_get("pfr" + istr(j)) + "</font> <font color=\"#7f8c8d\">" + st_get("pfe" + istr(j)) + "</font><br>";
+        }
+    }
+    // вернуть правила отсюда нельзя: в той же цепочке команд уже прошёл DRC, и новая смена правил
+    // роняет Fusion (очередь обновления панели ошибок ссылается на удалённые ошибки) — только отдельным запуском
+    if (st_get("bak") != "")
+        s += "<hr>" + L("Вернуть прежние правила: запустите настройщик ещё раз и нажмите «Вернуть прежние правила».",
+                        "To restore the previous rules: run the setup again and press «Restore previous rules».");
+    if (st_get("warn") != "") s += "<hr>" + replace_all(st_get("warn"), "\n", "<br>");
+    s += "<hr><font color=\"#7f8c8d\">" + jr_sign() + "</font>";
+
+    dlgDialog(jr_title() + " · " + L("итог настройки JLCPCB", "JLCPCB setup summary")) {
+        dlgHBoxLayout {
+            dlgVBoxLayout dlgSpacing(430);
+            dlgVBoxLayout {
+                dlgHBoxLayout dlgSpacing(720);
+                dlgTextView(s);
+            }
+        }
+        dlgHBoxLayout {
+            dlgStretch(1);
+            dlgPushButton("+OK") dlgAccept(1);
+        }
+    };
+    return "";
+}
+
+if (argc > 2 && argv[1] == "-summary") {
+    if (!board) exit(0);
+    string cmd = js_summary(argv[2]);
+    if (cmd != "") exit(cmd);
+    exit(0);
+}
+
+// ---------------------------------------------------------------- фаза 1
+
+if (!board) {
+    dlgMessageBox(L("Запустите из редактора платы (или с ключом -export <папка> — только пакет правил).",
+                    "Run from the board editor (or with -export <folder> for the rule pack only)."), "OK");
+    exit(EXIT_FAILURE);
+}
+
+js_scan();
+js_home = home_from(argv[0]);
+if (js_home == "") js_home = home_from(js_bname);
+if (js_home == "") js_home = home_from(path_dru[0]);
+if (js_home != "") runner_init(js_home + "/AppData/Local/Temp");
+string work = js_home != "" ? js_home + "/AppData/Local/dmxon_jlc" : js_dir(filedir(argv[0])) + "/_tmp";
+
+// шаг 0: Fusion сохраняет текущие правила платы (это и резервная копия, и её настоящий стек),
+// затем запускает этот же ULP с ключом -stage2 и прежними аргументами
+if (!(argc > 2 && argv[1] == "-stage2")) {
+    shell("mkdir " + qp(work + "/rules") + " 2>nul & mkdir " + qp(work + "/rules_backup") + " 2>nul");
+    string cur = work + "/rules_backup/" + cfg_part(js_base) + "_" + t2string(time(), "yyyyMMdd_hhmmss") + ".dru";
+    string args = "";
+    for (int a0 = 1; a0 < argc; a0++) args += " " + js_cq(argv[a0]);
+    exit("DRC SAVE " + js_cq(cur) + ";\nRUN " + js_cq(argv[0]) + " -stage2 " + js_cq(cur) + args + ";\n");
+}
+string bak = argv[2];
+int js_have_bak = 0;
+if (file_exists(bak)) js_have_bak = js_read_setup(bak);
+if (!js_have_bak) bak = "";
+js_n_set = 0;
+int any0 = 0;
+for (int l1 = 1; l1 <= 16; l1++) {
+    if (js_cu_set[l1]) js_n_set++;
+    if (js_cu_set[l1] || js_cu_obj[l1]) any0++;
+}
+if (any0 < 2) any0 = 2;
+if (any0 % 2) any0++;
+js_detect = any0;
+
+// настройки: прошлый выбор + аргументы
+int o_batch = 0, o_class = 1, o_install = 1, o_fabkit = 1;
+jr_prof   = strtol(cfgget(js_key("prof"), "0"));
+jr_thick  = strtod(cfgget(js_key("thick"), "1.6"));
+jr_oo     = strtod(cfgget(js_key("outer"), "1"));
+jr_oi     = strtod(cfgget(js_key("inner"), "0.5"));
+jr_tented = strtol(cfgget(js_key("tented"), "1"));
+jr_vcut   = strtol(cfgget(js_key("vcut"), "0"));
+js_mask   = cfgget(FABKIT_ID + ".mask", "Green");
+o_class   = strtol(cfgget(js_key("class"), "1"));
+o_install = strtol(cfgget(js_key("install"), "1"));
+o_fabkit  = strtol(cfgget(js_key("fabkit"), "1"));
+jr_n = js_detect > 8 ? 8 : js_detect;
+
+for (int a = 3; a < argc; a++) {
+    string k = argv[a];
+    string v = a + 1 < argc ? argv[a + 1] : "";
+    if (k == "-batch") o_batch = 1;
+    else if (k == "-layers") { jr_n = strtol(v); a++; }
+    else if (k == "-profile") {
+        for (int p = 0; p < 3; p++) if (strupr(v) == strupr(JR_PID[p])) jr_prof = p;
+        a++;
+    }
+    else if (k == "-thick") { jr_thick = strtod(v); a++; }
+    else if (k == "-outer") { jr_oo = strtod(v); a++; }
+    else if (k == "-inner") { jr_oi = strtod(v); a++; }
+    else if (k == "-mask") { js_mask = v; a++; }
+    else if (k == "-vcut") jr_vcut = 1;
+    else if (k == "-open") jr_tented = 0;
+    else if (k == "-noclass") o_class = 0;
+    else if (k == "-noinstall") o_install = 0;
+    else if (k == "-nofabkit") o_fabkit = 0;
+}
+if (jr_n != 2 && jr_n != 4 && jr_n != 6 && jr_n != 8) jr_n = 2;
+if (jr_prof < 0 || jr_prof > 2) jr_prof = 0;
+
+int sel_n = jr_n / 2 - 1, sel_p = jr_prof, sel_t = 5, sel_o = jr_oo >= 2 ? 1 : 0, sel_i = 0, sel_m = 0;
+for (int t = 0; t < JR_NTHICK; t++) if (abs(JR_THICK[t] - jr_thick) < 0.01) sel_t = t;
+for (int q = 0; q < 3; q++) if (abs(JR_OZ_IN[q] - jr_oi) < 0.01) sel_i = q;
+for (int m = 0; m < N_MASKS; m++) if (MASKS[m] == js_mask) sel_m = m;
+
+string js_bak_key = js_key("bak." + cfg_part(js_base));
+string js_prev_bak = cfgget(js_bak_key, "");
+if (js_prev_bak != "" && !file_exists(js_prev_bak)) js_prev_bak = "";
+
+string preview = "";
+
+// папка пользователя для правил (0) или заданий CAM (1): Fusion по умолчанию указывает внутрь
+// своей программы (webdeploy) — туда не пишем, берём Документы\EAGLE или Документы\dmxON JLC Rules
+string js_user_dir(int kind)
+{
+    int i = 0;
+    while (1) {
+        string p = kind == 0 ? path_dru[i] : path_cam[i];
+        if (p == "") break;
+        p = js_dir(p);
+        string u = strlwr(p);
+        if (strstr(u, "/webdeploy/") < 0 && strstr(u, "/program files") < 0 && strstr(u, "/appdata/local/autodesk") < 0) return p;
+        i++;
+    }
+    if (js_home == "") return "";
+    string sub = kind == 0 ? "design rules" : "cam";
+    if (file_exists(js_home + "/Documents/EAGLE/" + sub)) return js_home + "/Documents/EAGLE/" + sub;
+    return js_home + "/Documents/dmxON JLC Rules/" + sub;
+}
+
+void js_apply_sel()
+{
+    jr_n = (sel_n + 1) * 2;
+    jr_prof = sel_p;
+    jr_thick = JR_THICK[sel_t];
+    jr_oo = sel_o ? 2 : 1;
+    jr_oi = JR_OZ_IN[sel_i];
+    js_mask = MASKS[sel_m];
+    js_make_layers();
+    preview = js_preview();
+    for (int tt = 0; tt < JR_NTHICK; tt++) if (abs(JR_THICK[tt] - jr_thick) < 0.01) sel_t = tt;
+    for (int qq = 0; qq < 3; qq++) if (abs(JR_OZ_IN[qq] - jr_oi) < 0.01) sel_i = qq;
+}
+
+js_apply_sel();
+
+string info = "<b>" + js_base + "</b> · ";
+if (js_outline) info += num(round((js_x2 - js_x1) * 10) / 10.0) + " × " + num(round((js_y2 - js_y1) * 10) / 10.0) + " мм · ";
+info += L("медь на слоях", "copper on layers") + " " + js_list(0) + " · " + L("в стеке платы", "board stack-up") + " " + js_list(1) +
+        " · " + L("определено", "detected") + ": <b>" + istr(js_detect) + "</b>";
+if (js_napp) info += " · " + L("одобрено DRC", "approved DRC") + ": " + istr(js_napp);
+if (js_detect > 8) info += " <font color=\"#c0392b\">" + L("больше 8 слоёв — набор до 8", "more than 8 layers — pack covers up to 8") + "</font>";
+
+int action = 1;
+if (!o_batch) {
+    action = dlgDialog(jr_title() + " · " + L("настройка платы под JLCPCB", "JLCPCB board setup")) {
+        dlgLabel(info);
+        dlgHBoxLayout {
+            dlgGroup(L("Плата", "Board")) {
+                dlgGridLayout {
+                    dlgCell(0, 0) dlgLabel(L2("Слоёв меди", "Copper layers"));
+                    dlgCell(0, 1) dlgComboBox(LAYER_ITEMS, sel_n) { js_apply_sel(); dlgRedisplay(); }
+                    dlgCell(1, 0) dlgLabel(L2("Профиль", "Profile"));
+                    dlgCell(1, 1) dlgComboBox(PROF_ITEMS, sel_p) { js_apply_sel(); dlgRedisplay(); }
+                    dlgCell(2, 0) dlgLabel(L2("Толщина, мм", "Thickness, mm"));
+                    dlgCell(2, 1) dlgComboBox(THICK_ITEMS, sel_t) { js_apply_sel(); dlgRedisplay(); }
+                    dlgCell(3, 0) dlgLabel(L2("Медь снаружи", "Outer copper"));
+                    dlgCell(3, 1) dlgComboBox(OUT_ITEMS, sel_o) { js_apply_sel(); dlgRedisplay(); }
+                    dlgCell(4, 0) dlgLabel(L2("Медь внутри", "Inner copper"));
+                    dlgCell(4, 1) dlgComboBox(IN_ITEMS, sel_i) { js_apply_sel(); dlgRedisplay(); }
+                    dlgCell(5, 0) dlgLabel(L2("Цвет маски", "Mask colour"));
+                    dlgCell(5, 1) dlgComboBox(MASKS, sel_m) { js_apply_sel(); dlgRedisplay(); }
+                }
+            }
+            dlgGroup(L("Что сделать", "Actions")) {
+                dlgCheckBox(L2("Переходные под маской", "Tented vias"), jr_tented) { js_apply_sel(); dlgRedisplay(); }
+                dlgCheckBox(L2("Панель V-cut: медь от края 0.4 мм", "V-cut panel: copper 0.4 mm from edge"), jr_vcut) { js_apply_sel(); dlgRedisplay(); }
+                dlgCheckBox(L2("Классы цепей не ниже минимума", "Net classes not below the minimum"), o_class);
+                dlgCheckBox(L2("Пакет правил и CAM — в Документы/EAGLE", "Rule pack and CAM into Documents/EAGLE"), o_install);
+                dlgCheckBox(L2("Толщину и маску — в dmxON FabKit", "Thickness and mask to dmxON FabKit"), o_fabkit);
+            }
+        }
+        dlgHBoxLayout {
+            dlgVBoxLayout dlgSpacing(270);
+            dlgVBoxLayout {
+                dlgHBoxLayout dlgSpacing(760);
+                dlgTextView(preview);
+            }
+        }
+        dlgHBoxLayout {
+            dlgPushButton("+" + L("Настроить", "Apply")) dlgAccept(1);
+            dlgPushButton(L("Только файлы…", "Files only…")) dlgAccept(2);
+            if (js_prev_bak != "") dlgPushButton(L("Вернуть прежние правила", "Restore previous rules")) dlgAccept(3);
+            dlgStretch(1);
+            dlgPushButton("-" + L("Отмена", "Cancel")) dlgReject();
+        }
+    };
+    if (action <= 0) {
+        if (bak != "") shell("del /q " + qp(bak) + " 2>nul");
+        exit(0);
+    }
+}
+else js_apply_sel();
+
+// ---- вернуть прежние правила
+if (action == 3) {
+    if (bak != "") shell("del /q " + qp(bak) + " 2>nul");
+    exit("DRC LOAD " + js_cq(js_prev_bak) + ";\n" + replace_all(cfgget(js_key("bakcls." + cfg_part(js_base)), ""), "|", "\n") + js_refresh());
+}
+
+jr_calc();
+if (!o_batch) {
+    cfgset(js_key("prof"), istr(jr_prof));
+    cfgset(js_key("thick"), jr_thick_txt());
+    cfgset(js_key("outer"), num(jr_oo));
+    cfgset(js_key("inner"), num(jr_oi));
+    cfgset(js_key("tented"), istr(jr_tented));
+    cfgset(js_key("vcut"), istr(jr_vcut));
+    cfgset(js_key("class"), istr(o_class));
+    cfgset(js_key("install"), istr(o_install));
+    cfgset(js_key("fabkit"), istr(o_fabkit));
+}
+
+// ---- только файлы: правила и задание CAM в выбранную папку
+if (action == 2) {
+    string dir = dlgDirectory(L("Папка для файлов правил", "Folder for the rule files"), js_home != "" ? js_home + "/Desktop" : "");
+    if (dir == "") exit(0);
+    dir = js_dir(dir);
+    int ok1 = jr_write_dru(dir + "/" + jr_name() + ".dru");
+    int ok2 = jr_write_cam(dir + "/" + jr_cam_name() + ".cam");
+    dlgMessageBox(L("Записано", "Written") + ":\n" + (ok1 ? jr_name() + ".dru\n" : "") + (ok2 ? jr_cam_name() + ".cam\n" : "") + "\n" + dir, "OK");
+    exit(0);
+}
+
+// ---- настроить
+string stamp = t2string(time(), "yyyyMMdd_hhmmss");
+string dru = work + "/rules/" + jr_name() + ".dru";
+if (!jr_write_dru(dru)) {
+    if (!o_batch) dlgMessageBox(L("Не удалось записать файл правил:", "Cannot write the rules file:") + "\n" + dru, "OK");
+    exit(EXIT_FAILURE);
+}
+
+// пакет правил и задания CAM — в папки Fusion
+string inst = "";
+if (o_install) {
+    string pd = js_user_dir(0), pc = js_user_dir(1);
+    if (pd != "" && pc != "") {
+        shell("mkdir " + qp(pd) + " 2>nul & mkdir " + qp(pc) + " 2>nul");
+        jr_write_pack(pd, pc);
+        jr_calc();
+        jr_write_dru(pd + "/" + jr_name() + ".dru");
+        jr_write_cam(pc + "/" + jr_cam_name() + ".cam");
+    }
+    inst = L("Пакет правил", "Rule pack") + ": <tt>" + (pd != "" ? pd : "—") + "</tt> · " + L("задание CAM", "CAM job") + ": <tt>" +
+           (pc != "" ? pc + "/" + jr_cam_name() + ".cam" : "—") + "</tt>";
+}
+jr_calc();
+
+// классы цепей
+js_classes();
+if (!o_class) { js_cls_cmd = ""; js_cls_back = ""; js_cls_txt = ""; }
+if (bak != "") cfgset(js_bak_key, bak);
+cfgset(js_key("bakcls." + cfg_part(js_base)), replace_all(js_cls_back, "\n", "|"));
+
+if (o_fabkit) {
+    cfgset(FABKIT_ID + ".thick", jr_thick_txt());
+    cfgset(FABKIT_ID + ".mask", js_mask);
+}
+
+// состояние для итога
+js_preflight();
+string stfile = (js_home != "" ? js_home + "/AppData/Local/Temp/dmxon_jlc" : work) + "/jlc_" + cfg_part(js_base) + "_" + stamp + ".txt";
+shell("mkdir " + qp(filedir(stfile)) + " 2>nul");
+st_set("base", js_base);
+st_set("name", jr_name());
+st_set("brief", jr_brief(1) + " · " + jr_setup_string() + " · " + L("дорожка/зазор", "track/space") + " " + num(jr_tw) + "/" + num(jr_cl) +
+       " · " + L("переходное", "via") + " " + jr_via_txt() + " · " + L("до края", "edge") + " " + num(jr_edge));
+st_set("bak", bak);
+st_set("cls", js_cls_txt);
+st_set("clsback", js_cls_back);
+st_set("inst", inst);
+string wtxt = "";
+string wr[];
+string we2[];
+int nwr = strsplit(wr, jr_warn_ru, '\n');
+strsplit(we2, jr_warn_en, '\n');
+for (int w1 = 0; w1 < nwr; w1++)
+    if (wr[w1] != "") wtxt += "<font color=\"#b9770e\">• " + wr[w1] + "</font> <font color=\"#7f8c8d\">" + we2[w1] + "</font>\n";
+st_set("warn", wtxt);
+st_seti("prof", jr_prof);
+st_set("vd", num(jr_vd));
+st_seti("npf", n_pf);
+for (int i = 0; i < n_pf; i++) {
+    st_set("pfs" + istr(i), pf_sev[i]);
+    st_set("pfr" + istr(i), pf_ru[i]);
+    st_set("pfe" + istr(i), pf_en[i]);
+}
+st_save(stfile);
+
+string cmd = "DRC LOAD " + js_cq(dru) + ";\n";
+cmd += js_cls_cmd;
+cmd += js_refresh();
+cmd += "RUN " + js_cq(argv[0]) + " -summary " + js_cq(stfile) + ";\n";
+exit(cmd);
