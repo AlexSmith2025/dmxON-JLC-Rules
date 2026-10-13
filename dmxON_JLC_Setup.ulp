@@ -607,7 +607,9 @@ string js_summary(string stfile)
         s += "<hr>" + L("Вернуть прежние правила: запустите настройщик ещё раз и нажмите «Вернуть прежние правила».",
                         "To restore the previous rules: run the setup again and press «Restore previous rules».");
     if (st_get("warn") != "") s += "<hr>" + replace_all(st_get("warn"), "\n", "<br>");
-    s += "<hr><font color=\"#7f8c8d\">" + jr_sign() + "</font>";
+    s += "<hr><font color=\"#b9770e\">&#10084;</font> " + L("Настройщик бесплатный. Помог — поддержите новые версии", "The setup is free. If it helped, support new versions") +
+         ": <a href=\"" + JR_DONATE + "\">PayPal · smith.show2025@gmail.com</a>";
+    s += "<br><font color=\"#7f8c8d\">" + jr_sign() + " · <a href=\"" + JR_REPO + "\">GitHub</a></font>";
 
     dlgDialog(jr_title() + " · " + L("итог настройки JLCPCB", "JLCPCB setup summary")) {
         dlgHBoxLayout {

@@ -8,6 +8,19 @@ New feature → MINOR, fix → PATCH.
 
 ---
 
+## 1.0.2 — 2026-10-13
+
+**Изменено / Changed**
+
+- В окне итога — строка поддержки проекта (PayPal) и ссылка на GitHub; ссылки открываются в браузере.
+  The summary window shows a support line (PayPal) and a GitHub link; links open in the browser.
+- README на английском (главная страница) и на русском (`README.ru.md`): баннер, значки версии и скачиваний, кнопка «Скачать», таблица совместимости по программам и версиям.
+  README in English (main page) and Russian (`README.ru.md`): banner, version and download badges, a Download button, a compatibility table by program and version.
+- В релизе — готовый архив `dmxON-JLC-Rules.zip` (постоянная ссылка на последнюю версию).
+  Releases carry a ready `dmxON-JLC-Rules.zip` (a permanent link to the latest version).
+
+---
+
 ## 1.0.1 — 2026-10-13
 
 **Исправлено / Fixed**

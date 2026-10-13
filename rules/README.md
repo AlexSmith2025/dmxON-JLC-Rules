@@ -5,7 +5,7 @@
 
 Часть [dmxON JLC Rules](../README.md) · **dmxON by AlexSmith 2026** · [лицензия / license](../LICENSE.md)
 
-> Проще всего — не ставить файлы вручную, а запустить настройщик `dmxON_JLC_Setup.ulp`: он сам определит слои платы, подберёт стек JLCPCB для любой толщины и меди, загрузит правила, проверит плату и покажет итог. См. [README](../README.md#быстрый-старт--quick-start).
+> Проще всего — не ставить файлы вручную, а запустить настройщик `dmxON_JLC_Setup.ulp`: он сам определит слои платы, подберёт стек JLCPCB для любой толщины и меди, загрузит правила, проверит плату и покажет итог. См. [README](../README.ru.md#быстрый-старт) / see [README](../README.md#quick-start).
 > The easiest way is not to install the files by hand but to run the `dmxON_JLC_Setup.ulp` setup: it detects the board layers, picks the JLCPCB stack-up for any thickness and copper, loads the rules, checks the board and shows a summary.
 
 ---
