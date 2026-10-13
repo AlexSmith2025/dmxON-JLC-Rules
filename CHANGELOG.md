@@ -8,6 +8,17 @@ New feature → MINOR, fix → PATCH.
 
 ---
 
+## 1.0.1 — 2026-10-13
+
+**Исправлено / Fixed**
+
+- Итог DRC: «Drill Clearance» (расстояние между отверстиями) больше не переводится как «сверло меньше минимума», и подсказка про платные отверстия меньше 0.3 мм появляется только при настоящих ошибках размера сверла. Перевод сверен со всеми названиями ошибок Fusion и EAGLE, включая новые («Maximum Drill Size», «Minimum PTH Drill Size», «Soldermask - Silkscreen Clearance»).
+  DRC summary: «Drill Clearance» (hole spacing) is no longer reported as «drill below minimum», and the hint about paid holes under 0.3 mm shows only for real drill-size errors. The translation is checked against every Fusion and EAGLE error name, including the new ones.
+- Замечание «медь вне стека» теперь по каждому слою и говорит, что на нём лежит: дорожки и полигоны каких цепей, переходные, линии, тексты, площадки и графика каких деталей. Если Fusion отмечает слой занятым, а объектов нет, — так и пишет.
+  The «copper outside the stack-up» finding now goes layer by layer and says what is there: tracks and pours of which nets, vias, lines, texts, pads and graphics of which parts. If Fusion marks a layer as used but nothing is found, it says so.
+
+---
+
 ## 1.0.0 — 2026-10-09
 
 Первый выпуск dmxON JLC Rules. / First release of dmxON JLC Rules.

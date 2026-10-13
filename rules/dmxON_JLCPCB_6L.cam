@@ -4,8 +4,8 @@
         "name": "dmxON by AlexSmith"
     },
     "description": {
-        "EN": "<b>dmxON \u00b7 JLCPCB 6-layer CAM job</b><p>Gerber RS-274X + Excellon with JLCPCB file names: GTL, G1, G2, G3, G4, GBL, GTS, GBS, GTP, GBP, GTO, GBO, GKO, XLN (plated and non-plated holes in one file).<p>Copper layers: 1 2 3 14 15 16.<p>dmxON JLC Rules 1.0.0 \u00b7 dmxON by AlexSmith 2026",
-        "RU": "<b>dmxON \u00b7 JLCPCB 6 \u0441\u043b\u043e\u0451\u0432, \u0437\u0430\u0434\u0430\u043d\u0438\u0435 CAM</b><p>Gerber RS-274X \u0438 Excellon \u0441 \u0438\u043c\u0435\u043d\u0430\u043c\u0438 \u0444\u0430\u0439\u043b\u043e\u0432 JLCPCB. \u0421\u043b\u043e\u0438 \u043c\u0435\u0434\u0438: 1 2 3 14 15 16.<p>dmxON JLC Rules 1.0.0 \u00b7 dmxON by AlexSmith 2026"
+        "EN": "<b>dmxON \u00b7 JLCPCB 6-layer CAM job</b><p>Gerber RS-274X + Excellon with JLCPCB file names: GTL, G1, G2, G3, G4, GBL, GTS, GBS, GTP, GBP, GTO, GBO, GKO, XLN (plated and non-plated holes in one file).<p>Copper layers: 1 2 3 14 15 16.<p>dmxON JLC Rules 1.0.1 \u00b7 dmxON by AlexSmith 2026",
+        "RU": "<b>dmxON \u00b7 JLCPCB 6 \u0441\u043b\u043e\u0451\u0432, \u0437\u0430\u0434\u0430\u043d\u0438\u0435 CAM</b><p>Gerber RS-274X \u0438 Excellon \u0441 \u0438\u043c\u0435\u043d\u0430\u043c\u0438 \u0444\u0430\u0439\u043b\u043e\u0432 JLCPCB. \u0421\u043b\u043e\u0438 \u043c\u0435\u0434\u0438: 1 2 3 14 15 16.<p>dmxON JLC Rules 1.0.1 \u00b7 dmxON by AlexSmith 2026"
     },
     "output_type": "directory",
     "outputs": [
@@ -219,7 +219,7 @@
             ]
         }
     ],
-    "timestamp": "2026-10-09T00:00:00",
+    "timestamp": "2026-10-13T00:00:00",
     "type": "EAGLE CAM job",
     "units": "metric",
     "version": "9.2.0"

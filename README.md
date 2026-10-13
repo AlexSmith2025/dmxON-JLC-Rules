@@ -3,7 +3,7 @@
 **Правила JLCPCB для плат на 2, 4, 6 и 8 слоёв и настройщик, который готовит плату Fusion Electronics к заказу — одной командой.**
 **JLCPCB rules for 2, 4, 6 and 8-layer boards and a setup that prepares a Fusion Electronics board for ordering — in one run.**
 
-`v1.0.0` · 2026-10-09 · **dmxON by AlexSmith 2026** · [лицензия / license](LICENSE.md)
+`v1.0.1` · 2026-10-13 · **dmxON by AlexSmith 2026** · [лицензия / license](LICENSE.md)
 
 Работает в **Autodesk Fusion (Electronics)** и **EAGLE 9**. Весь интерфейс и документация — на русском и английском.
 Runs in **Autodesk Fusion (Electronics)** and **EAGLE 9**. The whole interface and documentation are in Russian and English.
@@ -156,7 +156,7 @@ The rules carry the **JLCPCB stack-up**: which copper layers exist, where prepre
 
 | Проверка / Check | Почему / Why |
 |---|---|
-| Медь на слоях вне выбранного стека / Copper on layers outside the chosen stack | при уменьшении числа слоёв медь пропала бы из Gerber / it would vanish from Gerber when reducing the layer count |
+| Медь на слоях вне выбранного стека — с перечнем, что именно там лежит / Copper on layers outside the chosen stack — listing what exactly is there | при уменьшении числа слоёв медь пропала бы из Gerber / it would vanish from Gerber when reducing the layer count |
 | Нет контура (слой 20) / No outline (layer 20) | без контура плату не изготовить / no board without an outline |
 | Размер платы / Board size | от 3 × 3 мм до 670 × 600 (2 слоя), 663 × 593 (4 слоя), 656 × 586 мм (6–8 слоёв) / from 3 × 3 mm up to the JLCPCB maximum |
 | Дорожки тоньше минимума профиля / Tracks thinner than the profile minimum | прогноз того, что отметит DRC / a forecast of what DRC will flag |
@@ -250,7 +250,7 @@ The rule files assume 1.6 mm, 1 oz / 0.5 oz copper, tented vias and regular rout
 | Вопрос / Question | Ответ / Answer |
 |---|---|
 | Определилось не то число слоёв / Wrong layer count detected | настройщик смотрит на стек платы и медь на слоях; выберите нужное число в списке / the setup looks at the board stack and the copper on the layers; pick the right number in the list |
-| «Медь на слоях … не входит в стек» / «Copper on layers … is outside the stack» | выберите больше слоёв или перенесите медь / choose more layers or move the copper |
+| «Слой N не входит в стек, а на нём: …» / «Layer N is outside the stack-up but holds: …» | в замечании перечислено, что лежит на слое (дорожки и полигоны цепей, переходные, площадки и графика деталей); уберите это со слоя или выберите больше слоёв / the finding lists what is on the layer; move it off the layer or choose more layers |
 | Ошибки «сверло меньше минимума» / «Drill Size» errors | в профилях Стандарт и Плотный отверстия меньше 0.3 мм считаются ошибкой — у JLCPCB они платные; увеличьте сверло или выберите Предельный / in Standard and Dense holes under 0.3 mm are errors because JLCPCB charges for them; enlarge them or choose Extreme |
 | Много «медь у края» / Many «copper to edge» errors | Стандарт держит 0.3 мм; для плотной платы — Плотный (0.25) или Предельный (0.2) / Standard keeps 0.3 mm; for a dense board use Dense (0.25) or Extreme (0.2) |
 | Пояски площадок стали больше / Pad rings got larger | правила задают минимальный поясок JLCPCB; если площадка в библиотеке больше — используется она / the rules set the JLCPCB minimum ring; a larger library pad is kept |

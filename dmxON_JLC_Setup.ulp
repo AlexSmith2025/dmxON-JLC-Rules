@@ -169,6 +169,25 @@ void js_text(UL_TEXT T)
     hv_add("txt_s", sz * T.ratio / 100.0);
 }
 
+// что лежит на внутреннем слое — чтобы замечание «медь вне стека» было понятно
+string js_lay_ru[], js_lay_en[];
+int js_lay_n[];
+
+void js_cu(int l, string ru, string en)
+{
+    if (l < 1 || l > 16) return;
+    js_cu_obj[l] = 1;
+    if (l == 1 || l == 16) return;
+    if (strstr(", " + js_lay_ru[l] + ",", ", " + ru + ",") >= 0) return;
+    js_lay_n[l]++;
+    if (js_lay_n[l] > 4) {
+        if (js_lay_n[l] == 5) { js_lay_ru[l] += ", …"; js_lay_en[l] += ", …"; }
+        return;
+    }
+    js_lay_ru[l] += (js_lay_ru[l] == "" ? "" : ", ") + ru;
+    js_lay_en[l] += (js_lay_en[l] == "" ? "" : ", ") + en;
+}
+
 void js_scan()
 {
     // у каждого цикла своё имя переменной: в ULP имя живёт до конца блока
@@ -176,24 +195,27 @@ void js_scan()
         js_bname = B.name;
         js_base = filesetext(filename(B.name), "");
         B.layers(LY) {
-            if (LY.number >= 1 && LY.number <= 16 && LY.used) js_cu_obj[LY.number] = 1;
+            if (LY.number >= 1 && LY.number <= 16 && LY.used) js_cu_obj[LY.number] = 1;   // «на слое есть объекты»
         }
         B.signals(SG) {
             SG.wires(SW) {
-                if (SW.layer >= 1 && SW.layer <= 16) { js_cu_obj[SW.layer] = 1; if (SW.width > 0) hv_add("trk", u2mm(SW.width)); }
+                if (SW.layer >= 1 && SW.layer <= 16) {
+                    js_cu(SW.layer, "дорожка " + SG.name, "track " + SG.name);
+                    if (SW.width > 0) hv_add("trk", u2mm(SW.width));
+                }
             }
             // полигоны: в Fusion цикл polygons() устарел — у цепей заливки polyPours, у платы и корпусов polyShapes
             SG.polyPours(SPP) {
-                if (SPP.layer >= 1 && SPP.layer <= 16) js_cu_obj[SPP.layer] = 1;
+                js_cu(SPP.layer, "полигон " + SG.name, "pour " + SG.name);
             }
             SG.vias(SV) {
-                js_cu_obj[SV.start] = 1;
-                js_cu_obj[SV.end] = 1;
+                js_cu(SV.start, "переходное " + SG.name, "via " + SG.name);
+                js_cu(SV.end, "переходное " + SG.name, "via " + SG.name);
                 hv_add("via", u2mm(SV.drill));
             }
         }
         B.wires(BW) {
-            if (BW.layer >= 1 && BW.layer <= 16) js_cu_obj[BW.layer] = 1;
+            js_cu(BW.layer, "линия на плате", "board line");
             if (BW.layer == 20) {
                 js_bbox(u2mm(BW.x1), u2mm(BW.y1)); js_bbox(u2mm(BW.x2), u2mm(BW.y2));
                 if (BW.arc) {
@@ -208,30 +230,30 @@ void js_scan()
                 real cr = u2mm(BC.radius);
                 js_bbox(u2mm(BC.x) - cr, u2mm(BC.y) - cr); js_bbox(u2mm(BC.x) + cr, u2mm(BC.y) + cr);
             }
-            if (BC.layer >= 1 && BC.layer <= 16) js_cu_obj[BC.layer] = 1;
+            js_cu(BC.layer, "окружность", "circle");
         }
         B.polyShapes(BPS) {
-            if (BPS.layer >= 1 && BPS.layer <= 16) js_cu_obj[BPS.layer] = 1;
+            js_cu(BPS.layer, "фигура на плате", "board shape");
         }
         B.rectangles(BR) {
-            if (BR.layer >= 1 && BR.layer <= 16) js_cu_obj[BR.layer] = 1;
+            js_cu(BR.layer, "прямоугольник", "rectangle");
         }
         B.texts(BT) {
-            if (BT.layer >= 1 && BT.layer <= 16) js_cu_obj[BT.layer] = 1;
+            js_cu(BT.layer, "текст «" + BT.value + "»", "text «" + BT.value + "»");
             js_text(BT);
         }
         B.holes(BH) { hv_add("npth", u2mm(BH.drill)); }
         B.elements(E) {
             E.footprint.contacts(CT) {
-                if (CT.smd) { if (CT.smd.layer >= 1 && CT.smd.layer <= 16) js_cu_obj[CT.smd.layer] = 1; }
+                if (CT.smd) js_cu(CT.smd.layer, "площадка " + E.name, "pad of " + E.name);
             }
             E.footprint.wires(PW) {
-                if (PW.layer >= 1 && PW.layer <= 16) js_cu_obj[PW.layer] = 1;
+                js_cu(PW.layer, "графика " + E.name, "graphics of " + E.name);
                 if (PW.layer == 20) { js_bbox(u2mm(PW.x1), u2mm(PW.y1)); js_bbox(u2mm(PW.x2), u2mm(PW.y2)); }
                 if (js_silk(PW.layer) && PW.width > 0) hv_add("silk", u2mm(PW.width));
             }
             E.footprint.polyShapes(FPS) {
-                if (FPS.layer >= 1 && FPS.layer <= 16) js_cu_obj[FPS.layer] = 1;
+                js_cu(FPS.layer, "графика " + E.name, "graphics of " + E.name);
             }
             E.footprint.circles(PC) {
                 if (js_silk(PC.layer) && PC.width > 0) hv_add("silk", u2mm(PC.width));
@@ -351,11 +373,13 @@ real JS_MAXH[] = { 600, 593, 586, 586 };
 void js_preflight()
 {
     n_pf = 0;
-    string lost = "";
-    for (int l = 1; l <= 16; l++) if (js_cu_obj[l] && !js_in_stack(l)) lost += (lost == "" ? "" : ", ") + istr(l);
-    if (lost != "")
-        pf("E", "Медь на слоях " + lost + " не входит в выбранный стек из " + istr(jr_n) + " слоёв.",
-                "Copper on layers " + lost + " is outside the selected " + istr(jr_n) + "-layer stack-up.");
+    for (int l = 1; l <= 16; l++) {
+        if (!js_cu_obj[l] || js_in_stack(l)) continue;
+        string wr = js_lay_ru[l], we = js_lay_en[l];
+        if (wr == "") { wr = "объекты не найдены — Fusion отмечает слой занятым, проверьте его вручную"; we = "no objects found — Fusion marks the layer as used, check it by hand"; }
+        pf("E", "Слой " + istr(l) + " не входит в стек из " + istr(jr_n) + " слоёв, а на нём: " + wr + ". Уберите это со слоя или выберите больше слоёв.",
+                "Layer " + istr(l) + " is outside the " + istr(jr_n) + "-layer stack-up but holds: " + we + ". Move it off the layer or choose more layers.");
+    }
     if (!js_outline)
         pf("E", "Нет контура платы (слой 20 Dimension).", "No board outline (layer 20 Dimension).");
     else {
@@ -486,24 +510,35 @@ string js_preview()
 
 // ---------------------------------------------------------------- итог после DRC (фаза 3)
 
-// виды ошибок DRC (EAGLE и Fusion): сначала частные названия, общий «зазор» — последним
-string ERR_KEY[] = { "outline", "dimension", "via - restrict", "restrict", "exclude", "keepout", "overlap", "drill dist",
-                     "drill", "width", "air", "stub", "length", "gap", "angle", "mask", "stop", "font", "layer", "polygon",
-                     "grid", "micro", "blind", "clearance" };
-string ERR_RU[]  = { "медь у края платы", "медь у края платы", "переходное в запретной зоне", "медь в запретной зоне",
-                     "детали в зоне исключения", "зона запрета", "перекрытие разных цепей", "отверстия слишком близко",
-                     "сверло меньше минимума", "ширина меньше минимума", "неразведённые соединения", "обрывок дорожки",
-                     "согласование длин", "узкая щель", "острый угол", "маска", "маска", "текст не векторным шрифтом",
+// виды ошибок DRC (EAGLE и Fusion): сначала частные названия, общий «зазор» — последним.
+// ERR_MIN_DRILL — номер строки «сверло меньше минимума» (для подсказки про платные отверстия < 0.3 мм)
+string ERR_KEY[] = { "board outline", "dimension", "via - restrict", "via restrict", "restrict", "exclude", "keepout",
+                     "overlap", "drill clear", "drill dist", "hole", "maximum", "drill", "silkscreen", "stop-mask",
+                     "solder-mask", "stop mask", "width", "air", "stub", "length", "small gap", "angle", "font",
+                     "layer abuse", "invalid polygon", "grid", "micro via", "blind", "smd size", "clearance" };
+string ERR_RU[]  = { "медь у края платы", "медь у края платы", "переходное в запретной зоне", "переходное в запретной зоне",
+                     "медь в запретной зоне", "детали в зоне исключения", "зона запрета", "перекрытие разных цепей",
+                     "отверстия слишком близко", "отверстия слишком близко", "отверстия слишком близко",
+                     "больше допустимого максимума", "сверло меньше минимума", "шелкография у открытой меди",
+                     "маска", "маска", "маска", "ширина меньше минимума", "неразведённые соединения", "обрывок дорожки",
+                     "согласование длин", "узкая щель в меди", "острый угол", "текст не векторным шрифтом",
                      "объект на неподходящем слое", "ошибка полигона", "вне сетки", "микропереходное", "глухое переходное",
-                     "зазор между цепями" };
-int N_ERR = 24;
+                     "размер площадки SMD", "зазор между цепями" };
+int N_ERR = 31;
+int ERR_MIN_DRILL = 12;
 
-string js_err_ru(string d)
+int js_err_idx(string d)
 {
     string l = strlwr(d);
     for (int i = 0; i < N_ERR; i++)
-        if (strstr(l, ERR_KEY[i]) >= 0) return ERR_RU[i];
-    return "";
+        if (strstr(l, ERR_KEY[i]) >= 0) return i;
+    return -1;
+}
+
+string js_err_ru(string d)
+{
+    int i = js_err_idx(d);
+    return i < 0 ? "" : ERR_RU[i];
 }
 
 // после смены правил: пересчитать полигоны и сразу проверить — иначе список ошибок Fusion
@@ -526,7 +561,7 @@ string js_summary(string stfile)
             else if (ER.type == ERROR_TYPE_WARNING) n_warn++;
             else {
                 n_act++;
-                if (strstr(strlwr(ER.description), "drill") >= 0 && strstr(strlwr(ER.description), "dist") < 0) n_drill++;
+                if (js_err_idx(ER.description) == ERR_MIN_DRILL) n_drill++;
                 int f = -1;
                 for (int i = 0; i < ne; i++) if (ed[i] == ER.description) f = i;
                 if (f < 0) { ed[ne] = ER.description; ec[ne] = 0; f = ne; ne++; }
