@@ -75,6 +75,7 @@ Older or newer Fusion builds usually work too; if something breaks after a Fusio
    ```
 3. Check the layer count, profile and thickness — the preview shows every value, the stack-up and the board findings.
 4. Press **Apply**. A few seconds later the summary with the DRC result appears.
+5. **Save the board** (Ctrl+S) — the rules are stored in it, and Fusion exports Gerber from the saved version.
 
 Best run it **before routing** (so routing follows JLCPCB rules from the start) and **once more before export**.
 
@@ -197,7 +198,9 @@ The rule files assume 1.6 mm, 1 oz / 0.5 oz, tented vias and regular routing; fo
 ## Together with dmxON FabKit
 
 [**dmxON FabKit**](https://github.com/AlexSmith2025/dmxON-FabKit) turns the board into a complete JLCPCB order: Gerber zip, BOM and CPL with LCSC parts, a report, A4 assembly documentation and toner-transfer sheets.
-Workflow: `dmxON_JLC_Setup` (rules, stack-up, DRC clean) → `dmxON_FabKit` (order package; thickness and mask colour already filled in).
+Workflow: `dmxON_JLC_Setup` (rules, stack-up, DRC clean) → **save the board** (Ctrl+S) → `dmxON_FabKit` (order package; thickness and mask colour already filled in).
+
+> **Save the board after the setup.** Fusion exports Gerber from the last *saved* version; without saving, the new rules (rings, vias, mask) do not reach the Gerber files.
 
 ---
 

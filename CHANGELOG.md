@@ -16,6 +16,8 @@ New feature → MINOR, fix → PATCH.
   The summary window shows a support line (PayPal) and a GitHub link; links open in the browser.
 - README на английском (главная страница) и на русском (`README.ru.md`): баннер, значки версии и скачиваний, кнопка «Скачать», таблица совместимости по программам и версиям.
   README in English (main page) and Russian (`README.ru.md`): banner, version and download badges, a Download button, a compatibility table by program and version.
+- README: после настройки сохраните плату — Gerber Fusion делает из последней сохранённой версии.
+  README: save the board after the setup — Fusion exports Gerber from the last saved version.
 - В релизе — готовый архив `dmxON-JLC-Rules.zip` (постоянная ссылка на последнюю версию).
   Releases carry a ready `dmxON-JLC-Rules.zip` (a permanent link to the latest version).
 
