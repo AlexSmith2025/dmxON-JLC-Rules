@@ -5,7 +5,23 @@ Numbering: `MAJOR.MINOR.PATCH` — new feature → MINOR, fix → PATCH.
 
 ---
 
-## 1.1.0 — 2026-10-13
+## 1.2.0 — 2026-10-13
+
+**New**
+
+- **Standard** selector next to the language — **ISO** or **GOST**, shared with dmxON FabKit (it decides which documentation FabKit writes). The preview and the summary show the matching standards: IPC-2221C design, IPC-6012F Class 2 fabrication and IPC-A-600M acceptance, or the **GOST R 53429-2009 accuracy class** worked out from the track and space width.
+- **dmxON add-in for Fusion** (`fusion-addin/dmxON`, installed by `INSTALL.ulp`): a **dmxON** tab in the PCB and schematic editors (FabKit, JLC Rules, Backup, Updates, Settings, Help); it registers the dmxON folders in Fusion's ULP, design rules and CAM lists — the setting Fusion really reads — and keeps them valid after Fusion updates. The rule pack and the CAM jobs are in DRC → Load… and in the CAM list straight away.
+- **Updates from GitHub** through the add-in: a daily check of the latest releases, install on request.
+- **Backup of the whole design folder** from the dmxON tab: EAGLE 9 schematics, boards and libraries, Fusion archives of 3D designs, drawings as PDF and every other file, in one zip with a manifest and restore instructions.
+- `-std iso|gost` for batch mode.
+
+**Changed**
+
+- `INSTALL.ulp` installs the add-in instead of writing `EAGLE:Directories.*` (Fusion ignores those) and undoes what 1.1.0 wrote there.
+
+---
+
+## 1.1.0 — 2026-10-13 (not released separately; included in 1.2.0)
 
 **New**
 

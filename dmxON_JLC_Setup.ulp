@@ -3,7 +3,7 @@
        "net classes, a pre-flight check, DRC and a summary. The previous rules are backed up and can be restored.<p>"
        "<b>Usage:</b> <tt>RUN dmxON_JLC_Setup</tt> in the board editor<br>"
        "Batch: <tt>RUN dmxON_JLC_Setup -batch [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] "
-       "[-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl]</tt><br>"
+       "[-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl] [-std iso|gost]</tt><br>"
        "Rule pack only: <tt>RUN dmxON_JLC_Setup -export &lt;folder&gt;</tt><p>"
        "<author>dmxON by AlexSmith 2026 · free to use with attribution · LICENSE.md</author>",
        "ru: <b>dmxON JLC Rules</b> — правила JLCPCB и настройка платы одной командой<p>"
@@ -86,6 +86,7 @@ string js_home = "";
 string js_mask = "Green";
 
 lang_load();
+std_load();
 
 // подписи списков на языке интерфейса
 void js_items()
@@ -516,6 +517,27 @@ string js_stack_html()
     return s + "</table>";
 }
 
+// нормы: ISO — IPC (класс 2 — стандартное производство JLCPCB); ГОСТ Р 53429-2009 — класс точности по дорожке и зазору
+real GOST_T[] = { 0.75, 0.45, 0.25, 0.15, 0.10, 0.075, 0.05 };
+
+int js_gost_class(real v)
+{
+    for (int k = 0; k < 7; k++) if (GOST_T[k] <= v + 0.0005) return k + 1;
+    return 7;
+}
+
+string js_std_txt()
+{
+    real v = jr_tw < jr_cl ? jr_tw : jr_cl;
+    if (doc_std == 1) {
+        int c = js_gost_class(v);
+        return Lf("ГОСТ Р 53429-2009: класс точности {0} (дорожка и зазор ≥ {1} мм)", "GOST R 53429-2009: accuracy class {0} (track and space ≥ {1} mm)",
+                  istr(c), num(GOST_T[c - 1]), "");
+    }
+    return L("IPC-2221C — проектирование · IPC-6012F класс 2 — изготовление · IPC-A-600M — приёмка",
+             "IPC-2221C — design · IPC-6012F Class 2 — fabrication · IPC-A-600M — acceptance");
+}
+
 string js_preview()
 {
     jr_calc();
@@ -527,6 +549,7 @@ string js_preview()
     s += "<table cellspacing=\"0\" cellpadding=\"2\">";
     s += js_row(L("Стек", "Stack"), jr_setup_string() + " · " + jr_brief(ui_lang) + " · " + L("расчёт", "computed") + " " + tot + " " + mm);
     s += js_row(L("Дорожка / зазор", "Track / space"), num(jr_tw) + " / " + num(jr_cl) + " " + mm + " · " + L("площадки разных цепей", "pad to pad") + " " + num(jr_smd));
+    s += js_row(L("Нормы", "Standards"), js_std_txt());
     s += js_row(L("Переходное", "Via"), jr_via_txt() + " " + mm + " · " + L("поясок", "ring") + " ≥ " + num(jr_vr) + (jr_n > 2 ? " · " + L("внутри", "inner") + " ≥ " + num(jr_vri) : ""));
     s += js_row(L("Поясок выводов", "PTH ring"), num(jr_pr) + " " + mm + (jr_n > 2 ? " · " + L("внутри", "inner") + " " + num(jr_pri) : ""));
     s += js_row(L("До края / между отверстиями", "Edge / hole gap"), num(jr_edge) + " / " + num(jr_hh) + " " + mm + (jr_vcut ? " · V-cut" : ""));
@@ -628,6 +651,7 @@ string js_summary(string stfile)
     }
     string s = "<b>" + st_get("name") + "</b> " + L("загружены в плату", "loaded into the board") + " <b>" + st_get("base") + "</b><br>";
     s += "<font color=\"#7f8c8d\">" + st_get("brief") + "</font><br>";
+    if (st_get("stdline") != "") s += "<font color=\"#7f8c8d\">" + st_get("stdline") + "</font><br>";
     if (st_get("bak") != "") s += L("Прежние правила сохранены", "Previous rules saved") + ": <tt>" + st_get("bak") + "</tt><br>";
     if (st_get("cls") != "") s += "<br><b>" + L("Классы цепей подняты до минимума", "Net classes raised to the minimum") + "</b> <font color=\"#7f8c8d\">(" +
                                   L("дорожка/зазор/сверло, мм", "track/space/drill, mm") + ")</font><br>" + replace_all(st_get("cls"), "\n", "<br>");
@@ -763,6 +787,7 @@ for (int a = 3; a < argc; a++) {
     else if (k == "-noinstall") o_install = 0;
     else if (k == "-nofabkit") o_fabkit = 0;
     else if (k == "-lang") { int li = lang_index(v); if (li >= 0) ui_lang = li; a++; }
+    else if (k == "-std") { int si = std_index(v); if (si >= 0) doc_std = si; a++; }
 }
 if (jr_n != 2 && jr_n != 4 && jr_n != 6 && jr_n != 8) jr_n = 2;
 if (jr_prof < 0 || jr_prof > 2) jr_prof = 0;
@@ -826,17 +851,21 @@ string js_info()
 }
 
 int action = 1;
-int sel_lang = ui_lang;
+int sel_lang = ui_lang, sel_std = doc_std;
 // смена языка: окно закрывается и открывается снова уже на новом языке (выбранные значения сохраняются)
 while (!o_batch) {
     js_items();
     js_apply_sel();
     string info = js_info();
     sel_lang = ui_lang;
+    sel_std = doc_std;
     action = dlgDialog(jr_title() + " · " + L("настройка платы под JLCPCB", "JLCPCB board setup")) {
         dlgHBoxLayout {
             dlgLabel(info);
             dlgStretch(1);
+            dlgLabel(L("Стандарт", "Standard"));
+            dlgComboBox(STD_NAME, sel_std) { if (sel_std != doc_std) { doc_std = sel_std; std_save(); js_apply_sel(); dlgRedisplay(); } }
+            dlgSpacing(12);
             dlgLabel(L("Язык", "Language"));
             dlgComboBox(LANG_NAME, sel_lang) { if (sel_lang != ui_lang) { ui_lang = sel_lang; lang_save(); dlgAccept(9); } }
         }
@@ -963,6 +992,7 @@ st_set("name", jr_name());
 st_set("brief", jr_brief(ui_lang) + " · " + jr_setup_string() + " · " + L("дорожка/зазор", "track/space") + " " + num(jr_tw) + "/" + num(jr_cl) +
        " · " + L("переходное", "via") + " " + jr_via_txt() + " · " + L("до края", "edge") + " " + num(jr_edge));
 st_set("bak", bak);
+st_set("stdline", js_std_txt());
 st_set("cls", js_cls_txt);
 st_set("clsback", js_cls_back);
 st_set("inst", inst);

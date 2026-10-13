@@ -29,3 +29,5 @@
 _tmp/
 Thumbs.db
 desktop.ini
+
+__pycache__/

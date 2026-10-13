@@ -46,6 +46,8 @@
 | 🛟 | **Kopia zapasowa** poprzednich reguł przed każdym uruchomieniem i przywracanie jednym przyciskiem |
 | 🔎 | **Kontrola wstępna** tego, czego DRC nie widzi: rozmiar opisów, otwory niemetalizowane, rozmiar płytki, miedź poza stosem — z listą tego, co leży na złej warstwie |
 | 🌐 | **5 języków**: angielski, rosyjski, hiszpański, niemiecki, polski — wybór w oknie; pliki reguł mają opis we wszystkich pięciu |
+| 📐 | **ISO lub GOST**: wybór normy obok języka, wspólny z dmxON FabKit; podgląd i podsumowanie podają IPC-2221C / IPC-6012F klasa 2 / IPC-A-600M albo **klasę dokładności wg GOST R 53429-2009** dla Twojej ścieżki i odstępu |
+| 🧩 | **Karta dmxON w Fusion** (dodatek): JLC Rules, FabKit, kopia całego folderu projektu i aktualizacje z GitHuba jednym kliknięciem; pakiet reguł i zadania CAM są na listach Fusion |
 
 ---
 
@@ -53,7 +55,7 @@
 
 | | Konfigurator `dmxON_JLC_Setup.ulp` | Pliki reguł `.dru` | Zadania CAM `.cam` |
 |---|---|---|---|
-| **Autodesk Fusion (Electronics), Windows 10/11** | ✅ sprawdzone na Fusion **2705.1.11** i **2705.1.30** (październik 2026) | ✅ sprawdzone | ✅ CAM Processor |
+| **Autodesk Fusion (Electronics), Windows 10/11** | ✅ sprawdzone na Fusion **2705.1.30** (październik 2026) | ✅ sprawdzone | ✅ CAM Processor |
 | Autodesk Fusion na macOS | ❌ korzysta z poleceń pomocniczych Windows | ✅ ten sam format | ✅ ten sam format |
 | EAGLE 9.x | ❌ wymaga pętli ULP Fusion `polyPours`/`polyShapes` | ✅ format EAGLE 9 | ✅ format zadań EAGLE 8.6–9.6 |
 | KiCad, Altium, EasyEDA | ❌ | ❌ inny format reguł | ❌ |
@@ -66,17 +68,17 @@ Starsze i nowsze wersje Fusion zwykle też działają; jeśli coś przestanie dz
 
 1. [**Pobierz `dmxON-JLC-Rules.zip`**](https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip) i rozpakuj w dowolnym miejscu.
 2. W Fusion Electronics: **Automation → Run ULP → `INSTALL.ulp`** z rozpakowanego folderu, wybierz język i naciśnij **Zainstaluj**.
-3. **Uruchom ponownie Fusion.** `dmxON_JLC_Setup` pojawi się na liście **Run ULP** obok wbudowanych ULP, a pakiet reguł w **DRC → Load…** i w CAM Processor; wbudowane pliki Fusion pozostają na miejscu.
+3. **Uruchom ponownie Fusion jeden raz.** Edytory płytki i schematu dostaną kartę **dmxON**, `dmxON_JLC_Setup` będzie w **Run ULP**, pakiet reguł w **DRC → Load…**, a zadania CAM na liście CAM.
 
-Instalator kopiuje projekt do `Dokumenty\dmxON\dmxON-JLC-Rules` i dodaje go do folderów ULP, reguł projektowych i CAM przez własne ustawienia Fusion. Ponowne uruchomienie `INSTALL.ulp` aktualizuje pliki; **Usuń** przywraca poprzednie foldery Fusion. Ręcznie: zachowaj cały rozpakowany folder (`dmxON_JLC_Setup.ulp` wczytuje moduły z `lib\` obok siebie) i uruchamiaj `RUN 'C:/ścieżka/dmxON_JLC_Setup.ulp'`.
+Instalator kopiuje projekt do `Dokumenty\dmxON\dmxON-JLC-Rules` i instaluje **dodatek dmxON** (`%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\dmxON`), który stawia foldery dmxON na początku list ULP, reguł i CAM w Fusion (Preferences → General → Electronics → Directory) i naprawia je po aktualizacjach; wbudowane foldery pozostają. Ponowne uruchomienie `INSTALL.ulp` aktualizuje pliki; **Usuń** kasuje skopiowany projekt, a z ostatnim narzędziem dmxON także dodatek. Bez ponownego uruchomienia: **Utilities → Add-Ins → Scripts and Add-Ins → dmxON → Run**.
 
 ---
 
 ## Szybki start
 
 1. Otwórz **płytkę** w Fusion Electronics.
-2. Uruchom **Automation → Run ULP → `dmxON_JLC_Setup`**.
-3. W prawym górnym rogu wybierz **język** (domyślnie angielski), sprawdź liczbę warstw, profil i grubość — podgląd pokazuje każdą wartość, stos warstw i uwagi do płytki.
+2. Naciśnij **dmxON → JLC Rules** (albo **Automation → Run ULP → `dmxON_JLC_Setup`**).
+3. W prawym górnym rogu wybierz **normę** (ISO lub GOST) i **język**, sprawdź liczbę warstw, profil i grubość — podgląd pokazuje każdą wartość, stos warstw i uwagi do płytki.
 4. Naciśnij **Zastosuj**. Po kilku sekundach pojawi się podsumowanie z wynikiem DRC.
 5. **Zapisz płytkę** (Ctrl+S) — reguły są w niej zapisywane, a Fusion eksportuje Gerber z zapisanej wersji.
 
@@ -89,6 +91,7 @@ Najlepiej uruchomić **przed trasowaniem** (wtedy ścieżki od początku idą wg
 | Pole | Co ustawia |
 |---|---|
 | **Język** (prawy górny róg) | English, Русский, Español, Deutsch, Polski — okno przełącza się od razu; wspólne z dmxON FabKit |
+| **Norma** (prawy górny róg) | ISO lub GOST — jakie normy podają podgląd i podsumowanie oraz jaką dokumentację tworzy dmxON FabKit; wspólna z FabKit |
 | **Warstwy miedzi** | 2, 4, 6 lub 8. Domyślnie: to, co wynika ze stosu płytki i miedzi na jej warstwach |
 | **Profil** | Standard, Gęsty, Ekstremalny — zob. [Profile](#profile) |
 | **Grubość, mm** | 0.4–2.0. JLCPCB robi 4–8 warstw w grubości 0.8–2.0 mm; niedostępny wybór zastępowany jest najbliższym z uwagą |
@@ -183,11 +186,11 @@ Przed każdym uruchomieniem bieżące reguły płytki są zapisywane w `%LOCALAP
 ## Tryb wsadowy
 
 ```
-RUN dmxON_JLC_Setup.ulp -batch [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl]
+RUN dmxON_JLC_Setup.ulp -batch [-std iso|gost] [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl]
 RUN dmxON_JLC_Setup.ulp -export <folder>
 ```
 
-`-vcut` miedź 0.4 mm od krawędzi · `-open` przelotki bez maski · `-noclass` / `-noinstall` / `-nofabkit` pomiń klasy / pakiet / FabKit · `-lang` język podsumowania · `-export` tylko zapisuje pakiet (12 `.dru` + 4 `.cam`), płytka niepotrzebna. Ustawienia trybu wsadowego nie są zapamiętywane.
+`-vcut` miedź 0.4 mm od krawędzi · `-open` przelotki bez maski · `-noclass` / `-noinstall` / `-nofabkit` pomiń klasy / pakiet / FabKit · `-lang` język podsumowania · `-export` tylko zapisuje pakiet (12 `.dru` + 4 `.cam`), płytka niepotrzebna. Ustawienia trybu wsadowego nie są zapamiętywane. · `-std iso|gost` norma
 
 ---
 
@@ -212,7 +215,8 @@ Kolejność: `dmxON_JLC_Setup` (reguły, stos, DRC bez błędów) → **zapisz p
 
 | Pytanie | Odpowiedź |
 |---|---|
-| Po instalacji `dmxON_JLC_Setup` nie ma na liście Run ULP | uruchom ponownie Fusion — listę folderów czyta przy starcie |
+| Po instalacji brak karty **dmxON** | uruchom ponownie Fusion jeden raz albo włącz dodatek: **Utilities → Add-Ins → Scripts and Add-Ins → dmxON → Run** |
+| Jak zaktualizować? | **dmxON → Aktualizacje** sprawdza GitHub i instaluje nowe wersje; dodatek sprawdza też sam raz dziennie |
 | Rozpoznano złą liczbę warstw | konfigurator czyta stos płytki i miedź na jej warstwach; wybierz właściwą liczbę z listy |
 | «Warstwa N jest poza stosem, a zawiera: …» | uwaga wymienia, co leży na tej warstwie; usuń to z niej lub wybierz więcej warstw |
 | Błędy «Drill Size» | w profilach Standard i Gęsty otwory poniżej 0.3 mm są błędem, bo JLCPCB dolicza za nie opłatę; powiększ je lub wybierz Ekstremalny |
@@ -225,7 +229,7 @@ Kolejność: `dmxON_JLC_Setup` (reguły, stos, DRC bez błędów) → **zapisz p
 
 ## Jak to działa
 
-Krok 0 — `DRC SAVE` bieżących reguł (kopia i rzeczywisty stos) · krok 1 — analiza płytki, okno, kontrola wstępna, plik reguł · krok 2 — `DRC LOAD`, `CLASS`, `RATSNEST`, `DRC` · krok 3 — podsumowanie DRC. Szczegóły: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · zmiany: [CHANGELOG.md](CHANGELOG.md).
+Krok 0 — `DRC SAVE` bieżących reguł (kopia i rzeczywisty stos) · krok 1 — analiza płytki, okno, kontrola wstępna, plik reguł · krok 2 — `DRC LOAD`, `CLASS`, `RATSNEST`, `DRC` · krok 3 — podsumowanie DRC. Szczegóły: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · zmiany: [CHANGELOG.md](CHANGELOG.md). **Dodatek dmxON** (`fusion-addin/dmxON`, Python) robi to, czego nie potrafi ULP: ustawienia folderów Fusion, kartę dmxON, kopie zapasowe i aktualizacje.
 
 ```
 dmxON-JLC-Rules/

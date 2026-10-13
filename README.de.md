@@ -46,6 +46,8 @@
 | 🛟 | **Sicherung** der bisherigen Regeln vor jedem Lauf und Wiederherstellung per Knopfdruck |
 | 🔎 | **Vorabprüfung** dessen, was der DRC nicht sieht: Bestückungsdruckgröße, nicht durchkontaktierte Bohrungen, Platinengröße, Kupfer außerhalb des Aufbaus — mit einer Liste, was auf der falschen Lage liegt |
 | 🌐 | **5 Sprachen**: Englisch, Russisch, Spanisch, Deutsch, Polnisch — Auswahl im Dialog; die Regeldateien tragen ihre Beschreibung in allen fünf |
+| 📐 | **ISO oder GOST**: Normwahl neben der Sprache, gemeinsam mit dmxON FabKit; Vorschau und Zusammenfassung nennen IPC-2221C / IPC-6012F Klasse 2 / IPC-A-600M oder die **Genauigkeitsklasse nach GOST R 53429-2009** für Ihre Leiterbahn und Ihren Abstand |
+| 🧩 | **Reiter dmxON in Fusion** (Add-in): JLC Rules, FabKit, Sicherung des gesamten Designordners und Updates von GitHub mit einem Klick; Regelpaket und CAM-Jobs stehen in den Listen von Fusion |
 
 ---
 
@@ -53,7 +55,7 @@
 
 | | Setup `dmxON_JLC_Setup.ulp` | Regeldateien `.dru` | CAM-Jobs `.cam` |
 |---|---|---|---|
-| **Autodesk Fusion (Electronics), Windows 10/11** | ✅ getestet mit Fusion **2705.1.11** und **2705.1.30** (Oktober 2026) | ✅ getestet | ✅ CAM Processor |
+| **Autodesk Fusion (Electronics), Windows 10/11** | ✅ getestet mit Fusion **2705.1.30** (Oktober 2026) | ✅ getestet | ✅ CAM Processor |
 | Autodesk Fusion unter macOS | ❌ nutzt Windows-Hilfsbefehle | ✅ gleiches Format | ✅ gleiches Format |
 | EAGLE 9.x | ❌ braucht die Fusion-ULP-Schleifen `polyPours`/`polyShapes` | ✅ EAGLE-9-Format | ✅ Jobformat EAGLE 8.6–9.6 |
 | KiCad, Altium, EasyEDA | ❌ | ❌ anderes Regelformat | ❌ |
@@ -64,19 +66,19 @@
 
 ## Installation
 
-1. [**`dmxON-JLC-Rules.zip` herunterladen**](https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip) und an beliebiger Stelle entpacken.
+1. [**`dmxON-JLC-Rules.zip` herunterladen**](https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip) und beliebig entpacken.
 2. In Fusion Electronics: **Automation → Run ULP → `INSTALL.ulp`** aus dem entpackten Ordner, Sprache wählen und **Installieren** drücken.
-3. **Fusion neu starten.** `dmxON_JLC_Setup` steht nun in der Liste **Run ULP** neben den integrierten ULPs, das Regelpaket unter **DRC → Load…** und im CAM Processor; die integrierten Dateien von Fusion bleiben erhalten.
+3. **Fusion einmal neu starten.** Platinen- und Schaltplan-Editor erhalten den Reiter **dmxON**, `dmxON_JLC_Setup` steht unter **Run ULP**, das Regelpaket unter **DRC → Load…** und die CAM-Jobs in der CAM-Liste.
 
-Der Installer kopiert das Projekt nach `Dokumente\dmxON\dmxON-JLC-Rules` und trägt es über die eigenen Einstellungen von Fusion in die Ordner für ULPs, Designregeln und CAM ein. Ein erneuter Aufruf von `INSTALL.ulp` aktualisiert die Dateien; **Entfernen** stellt die vorherigen Ordner von Fusion wieder her. Manuell: den entpackten Ordner vollständig lassen (`dmxON_JLC_Setup.ulp` lädt seine Module aus `lib\` daneben) und mit `RUN 'C:/Pfad/dmxON_JLC_Setup.ulp'` starten.
+Der Installer kopiert das Projekt nach `Dokumente\dmxON\dmxON-JLC-Rules` und installiert das **dmxON-Add-in** (`%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\dmxON`), das die dmxON-Ordner an die Spitze der ULP-, Regel- und CAM-Listen von Fusion setzt (Preferences → General → Electronics → Directory) und sie nach Fusion-Updates repariert; die eingebauten Ordner bleiben. Ein erneuter Start von `INSTALL.ulp` aktualisiert die Dateien; **Entfernen** löscht das kopierte Projekt und mit dem letzten dmxON-Werkzeug auch das Add-in. Ohne Neustart: **Utilities → Add-Ins → Scripts and Add-Ins → dmxON → Run**.
 
 ---
 
 ## Schnellstart
 
 1. Die **Platine** in Fusion Electronics öffnen.
-2. **Automation → Run ULP → `dmxON_JLC_Setup`** starten.
-3. Oben rechts die **Sprache** wählen (Standard: Englisch), Lagenzahl, Profil und Dicke prüfen — die Vorschau zeigt jeden Wert, den Lagenaufbau und die Befunde der Platine.
+2. **dmxON → JLC Rules** drücken (oder **Automation → Run ULP → `dmxON_JLC_Setup`**).
+3. Oben rechts **Norm** (ISO oder GOST) und **Sprache** wählen, Lagenzahl, Profil und Dicke prüfen — die Vorschau zeigt jeden Wert, den Lagenaufbau und die Befunde der Platine.
 4. **Anwenden** drücken. Wenige Sekunden später erscheint die Zusammenfassung mit dem DRC-Ergebnis.
 5. **Platine speichern** (Strg+S) — die Regeln werden in ihr gespeichert, und Fusion exportiert Gerber aus der gespeicherten Version.
 
@@ -89,6 +91,7 @@ Am besten **vor dem Routen** ausführen (dann folgt das Routing von Anfang an de
 | Feld | Was es einstellt |
 |---|---|
 | **Sprache** (oben rechts) | English, Русский, Español, Deutsch, Polski — der Dialog wechselt sofort; gemeinsam mit dmxON FabKit |
+| **Norm** (oben rechts) | ISO oder GOST — welche Normen Vorschau und Zusammenfassung nennen und welche Dokumentation dmxON FabKit erstellt; gemeinsam mit FabKit |
 | **Kupferlagen** | 2, 4, 6 oder 8. Standard: was der Lagenaufbau der Platine und das Kupfer auf ihren Lagen ergeben |
 | **Profil** | Standard, Dicht, Extrem — siehe [Profile](#profile) |
 | **Dicke, mm** | 0.4–2.0. JLCPCB fertigt 4–8 Lagen in 0.8–2.0 mm; eine nicht verfügbare Wahl fällt mit Hinweis auf den nächsten Wert zurück |
@@ -183,11 +186,11 @@ Vor jedem Lauf werden die aktuellen Regeln der Platine in `%LOCALAPPDATA%\dmxon_
 ## Stapelbetrieb
 
 ```
-RUN dmxON_JLC_Setup.ulp -batch [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl]
+RUN dmxON_JLC_Setup.ulp -batch [-std iso|gost] [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl]
 RUN dmxON_JLC_Setup.ulp -export <Ordner>
 ```
 
-`-vcut` Kupfer 0.4 mm vom Rand · `-open` nicht abgedeckte Vias · `-noclass` / `-noinstall` / `-nofabkit` Klassen / Paket / FabKit auslassen · `-lang` Sprache der Zusammenfassung · `-export` schreibt nur das Paket (12 `.dru` + 4 `.cam`), keine Platine nötig. Einstellungen des Stapelbetriebs werden nicht gespeichert.
+`-vcut` Kupfer 0.4 mm vom Rand · `-open` nicht abgedeckte Vias · `-noclass` / `-noinstall` / `-nofabkit` Klassen / Paket / FabKit auslassen · `-lang` Sprache der Zusammenfassung · `-export` schreibt nur das Paket (12 `.dru` + 4 `.cam`), keine Platine nötig. Einstellungen des Stapelbetriebs werden nicht gespeichert. · `-std iso|gost` Norm
 
 ---
 
@@ -212,7 +215,8 @@ Ablauf: `dmxON_JLC_Setup` (Regeln, Lagenaufbau, DRC sauber) → **Platine speich
 
 | Frage | Antwort |
 |---|---|
-| `dmxON_JLC_Setup` fehlt nach der Installation in der Liste Run ULP | Fusion neu starten — die Ordnerliste wird beim Start gelesen |
+| Kein Reiter **dmxON** nach der Installation | Fusion einmal neu starten oder das Add-in starten: **Utilities → Add-Ins → Scripts and Add-Ins → dmxON → Run** |
+| Wie aktualisieren? | **dmxON → Updates** prüft GitHub und installiert neue Versionen; das Add-in prüft zudem täglich |
 | Falsche Lagenzahl erkannt | das Setup liest den Lagenaufbau der Platine und das Kupfer auf ihren Lagen; die richtige Zahl in der Liste wählen |
 | «Lage N liegt außerhalb des Aufbaus, enthält aber: …» | der Befund listet, was auf dieser Lage liegt; es von der Lage entfernen oder mehr Lagen wählen |
 | Fehler «Drill Size» | in Standard und Dicht sind Bohrungen unter 0.3 mm Fehler, weil JLCPCB sie extra berechnet; vergrößern oder Extrem wählen |
@@ -225,7 +229,7 @@ Ablauf: `dmxON_JLC_Setup` (Regeln, Lagenaufbau, DRC sauber) → **Platine speich
 
 ## Wie es funktioniert
 
-Schritt 0 — `DRC SAVE` der aktuellen Regeln (Sicherung und tatsächlicher Lagenaufbau) · Schritt 1 — Platinenanalyse, Dialog, Vorabprüfung, Regeldatei · Schritt 2 — `DRC LOAD`, `CLASS`, `RATSNEST`, `DRC` · Schritt 3 — DRC-Zusammenfassung. Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Änderungen: [CHANGELOG.md](CHANGELOG.md).
+Schritt 0 — `DRC SAVE` der aktuellen Regeln (Sicherung und tatsächlicher Lagenaufbau) · Schritt 1 — Platinenanalyse, Dialog, Vorabprüfung, Regeldatei · Schritt 2 — `DRC LOAD`, `CLASS`, `RATSNEST`, `DRC` · Schritt 3 — DRC-Zusammenfassung. Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Änderungen: [CHANGELOG.md](CHANGELOG.md). Das **dmxON-Add-in** (`fusion-addin/dmxON`, Python) übernimmt, was ein ULP nicht kann: die Ordner-Einstellungen von Fusion, den Reiter dmxON, Sicherungen und Updates.
 
 ```
 dmxON-JLC-Rules/

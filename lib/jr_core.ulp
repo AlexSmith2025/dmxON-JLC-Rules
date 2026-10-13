@@ -4,7 +4,7 @@
 // ---------------------------------------------------------------- продукт
 
 string JR_NAME    = "dmxON JLC Rules";
-string JR_VERSION = "1.1.0";              // при каждой переделке поднимать (см. CHANGELOG.md)
+string JR_VERSION = "1.2.0";              // при каждой переделке поднимать (см. CHANGELOG.md)
 string JR_DATE    = "2026-10-13";
 string JR_AUTHOR  = "dmxON by AlexSmith";
 string JR_YEAR    = "2026";
@@ -139,6 +139,35 @@ void lang_save()
 int lang_index(string c)
 {
     for (int i = 0; i < N_LANG; i++) if (LANG_CODE[i] == strlwr(c)) return i;
+    return -1;
+}
+
+// ---------------------------------------------------------------- стандарт документации
+// ISO — ISO 5457 / ISO 7200 / ISO 7573 / IEC 81346 и IPC; ГОСТ — ЕСКД (ГОСТ Р 2.104-2023 и др.).
+// Выбор общий для dmxON FabKit и dmxON JLC Rules (настройка dmxon.std).
+string STD_CODE[] = { "iso", "gost" };
+string STD_NAME[] = { "ISO", "ГОСТ" };
+int N_STD = 2;
+int doc_std = 0;                 // 0 ISO, 1 ГОСТ
+string STD_CFG = "dmxon.std";
+
+void std_load()
+{
+    string c = cfgget(STD_CFG, "iso");
+    doc_std = 0;
+    for (int i = 0; i < N_STD; i++) if (STD_CODE[i] == c) doc_std = i;
+}
+
+void std_save()
+{
+    cfgset(STD_CFG, STD_CODE[doc_std]);
+}
+
+int std_index(string c)
+{
+    c = strlwr(c);
+    if (c == "гост") c = "gost";
+    for (int i = 0; i < N_STD; i++) if (STD_CODE[i] == c) return i;
     return -1;
 }
 

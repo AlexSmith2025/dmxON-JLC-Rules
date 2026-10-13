@@ -21,6 +21,7 @@ CAM job	задание CAM	trabajo CAM	CAM-Job	zadanie CAM
 Cancel	Отмена	Cancelar	Abbrechen	Anuluj
 Cannot copy the files to:	Не удалось скопировать файлы в:	No se pueden copiar los archivos a:	Dateien können nicht kopiert werden nach:	Nie można skopiować plików do:
 Cannot find the user folder.	Не удалось определить папку пользователя.	No se encuentra la carpeta del usuario.	Benutzerordner nicht gefunden.	Nie znaleziono folderu użytkownika.
+Cannot install the dmxON add-in to:	Не удалось установить надстройку dmxON в:	No se pudo instalar el complemento dmxON en:	Das dmxON-Add-in konnte nicht installiert werden in:	Nie udało się zainstalować dodatku dmxON w:
 Cannot write the rules file:	Не удалось записать файл правил:	No se puede escribir el archivo de reglas:	Regeldatei kann nicht geschrieben werden:	Nie można zapisać pliku reguł:
 circle	окружность	círculo	Kreis	okrąg
 clearance between nets	зазор между цепями	separación entre redes	Abstand zwischen Netzen	odstęp między sieciami
@@ -35,7 +36,8 @@ dam	перемычка	puente de máscara	Lötstoppsteg	mostek maski
 Dense	Плотный	Denso	Dicht	Gęsty
 detected	определено	detectado	erkannt	wykryto
 different nets overlap	перекрытие разных цепей	solape de redes distintas	Überlappung verschiedener Netze	nakładanie się różnych sieci
-Done. Restart Fusion — {0} will appear in Automation → Run ULP.	Готово. Перезапустите Fusion — {0} появится в Automation → Run ULP.	Listo. Reinicie Fusion — {0} aparecerá en Automation → Run ULP.	Fertig. Fusion neu starten — {0} erscheint unter Automation → Run ULP.	Gotowe. Uruchom ponownie Fusion — {0} pojawi się w Automation → Run ULP.
+dmxON JLC Rules removed.	dmxON JLC Rules удалён.	dmxON JLC Rules eliminado.	dmxON JLC Rules entfernt.	dmxON JLC Rules usunięty.
+Done.	Готово.	Hecho.	Fertig.	Gotowe.
 drill below the minimum	сверло меньше минимума	taladro por debajo del mínimo	Bohrung unter dem Minimum	wiercenie poniżej minimum
 Drills below {0} mm: holes under 0.3 mm cost extra at JLCPCB — enlarge them or choose the Extreme profile.	Сверло меньше {0} мм: у JLCPCB отверстия меньше 0.3 мм стоят дороже — увеличьте сверло или выберите профиль «Предельный».	Taladros de menos de {0} mm: en JLCPCB los agujeros de menos de 0.3 mm tienen recargo — agrándelos o elija el perfil Extremo.	Bohrungen unter {0} mm: Löcher unter 0.3 mm kosten bei JLCPCB Aufpreis — vergrößern oder Profil Extrem wählen.	Wiercenia poniżej {0} mm: otwory mniejsze niż 0.3 mm są w JLCPCB dodatkowo płatne — powiększ je lub wybierz profil Ekstremalny.
 edge	до края	borde	Rand	krawędź
@@ -46,9 +48,8 @@ Extreme	Предельный	Extremo	Extrem	Ekstremalny
 files	файлов	archivos	Dateien	plików
 Files only…	Только файлы…	Solo archivos…	Nur Dateien…	Tylko pliki…
 Folder for the rule files	Папка для файлов правил	Carpeta para los archivos de reglas	Ordner für die Regeldateien	Folder na pliki reguł
-Fusion folders restored. Restart Fusion.\nThe copied files remain in:	Папки Fusion возвращены. Перезапустите Fusion.\nСкопированные файлы остались в:	Carpetas de Fusion restauradas. Reinicie Fusion.\nLos archivos copiados siguen en:	Fusion-Ordner wiederhergestellt. Fusion neu starten.\nDie kopierten Dateien bleiben in:	Foldery Fusion przywrócone. Uruchom ponownie Fusion.\nSkopiowane pliki pozostają w:
 Fusion reported no DRC result — open DRC manually.	Fusion не сообщил результат проверки — откройте DRC вручную.	Fusion no devolvió el resultado del DRC — ábralo manualmente.	Fusion hat kein DRC-Ergebnis gemeldet — DRC manuell öffnen.	Fusion nie zwrócił wyniku DRC — otwórz DRC ręcznie.
-Fusion's built-in ULPs stay in place	встроенные ULP Fusion остаются на месте	los ULP integrados de Fusion se mantienen	die integrierten ULPs von Fusion bleiben erhalten	wbudowane ULP Fusion pozostają na miejscu
+GOST R 53429-2009: accuracy class {0} (track and space ≥ {1} mm)	ГОСТ Р 53429-2009: класс точности {0} (дорожка и зазор ≥ {1} мм)	GOST R 53429-2009: clase de precisión {0} (pista y separación ≥ {1} mm)	GOST R 53429-2009: Genauigkeitsklasse {0} (Leiterbahn und Abstand ≥ {1} mm)	GOST R 53429-2009: klasa dokładności {0} (ścieżka i odstęp ≥ {1} mm)
 graphics of {0}	графика {0}	gráficos de {0}	Grafik von {0}	grafika {0}
 holes too close together	отверстия слишком близко	agujeros demasiado juntos	Löcher zu dicht beieinander	otwory zbyt blisko siebie
 inner	внутри	interior	innen	wewnątrz
@@ -58,6 +59,7 @@ Install	Установить	Instalar	Installieren	Zainstaluj
 Installation	Установка	Instalación	Installation	Instalacja
 Installation into Autodesk Fusion:	Установка в Autodesk Fusion:	Instalación en Autodesk Fusion:	Installation in Autodesk Fusion:	Instalacja w Autodesk Fusion:
 invalid polygon	ошибка полигона	polígono no válido	ungültiges Polygon	nieprawidłowy wielokąt
+IPC-2221C — design · IPC-6012F Class 2 — fabrication · IPC-A-600M — acceptance	IPC-2221C — проектирование · IPC-6012F класс 2 — изготовление · IPC-A-600M — приёмка	IPC-2221C — diseño · IPC-6012F clase 2 — fabricación · IPC-A-600M — aceptación	IPC-2221C — Entwurf · IPC-6012F Klasse 2 — Fertigung · IPC-A-600M — Abnahme	IPC-2221C — projektowanie · IPC-6012F klasa 2 — produkcja · IPC-A-600M — odbiór
 JLCPCB board setup	настройка платы под JLCPCB	Configuración de la placa para JLCPCB	Platinen-Einrichtung für JLCPCB	Konfiguracja płytki pod JLCPCB
 JLCPCB minimum, may cost extra	минимум JLCPCB, возможна доплата	mínimo de JLCPCB, puede tener recargo	JLCPCB-Minimum, ggf. Aufpreis	minimum JLCPCB, możliwa dopłata
 JLCPCB setup summary	итог настройки JLCPCB	Resumen de la configuración JLCPCB	Zusammenfassung der JLCPCB-Einrichtung	Podsumowanie konfiguracji JLCPCB
@@ -94,7 +96,9 @@ Profile	Профиль	Perfil	Profil	Profil
 PTH ring	Поясок выводов	Anillo PTH	Restring THT	Pierścień PTH
 rectangle	прямоугольник	rectángulo	Rechteck	prostokąt
 Remove	Удалить	Quitar	Entfernen	Usuń
-Restart Fusion after installing.	После установки перезапустите Fusion.	Reinicie Fusion después de instalar.	Starten Sie Fusion nach der Installation neu.	Po instalacji uruchom ponownie Fusion.
+Restart Fusion once after installing.	После установки один раз перезапустите Fusion.	Tras instalar, reinicie Fusion una vez.	Nach der Installation Fusion einmal neu starten.	Po instalacji uruchom ponownie Fusion jeden raz.
+Restart Fusion to remove the dmxON tab.	Перезапустите Fusion, чтобы убрать вкладку dmxON.	Reinicie Fusion para quitar la pestaña dmxON.	Fusion neu starten, um den Reiter dmxON zu entfernen.	Uruchom ponownie Fusion, aby usunąć kartę dmxON.
+Restart Fusion — the dmxON tab appears in the PCB and schematic editors, and {0} in Automation → Run ULP.	Перезапустите Fusion — в редакторах платы и схемы появится вкладка dmxON, а {0} — в Automation → Run ULP.	Reinicie Fusion: la pestaña dmxON aparece en los editores de placa y esquema, y {0} en Automation → Run ULP.	Fusion neu starten — der Reiter dmxON erscheint im Platinen- und Schaltplan-Editor, {0} unter Automation → Run ULP.	Uruchom ponownie Fusion — karta dmxON pojawi się w edytorach płytki i schematu, a {0} w Automation → Run ULP.
 Restore previous rules	Вернуть прежние правила	Restaurar reglas anteriores	Bisherige Regeln wiederherstellen	Przywróć poprzednie reguły
 ring	поясок	anillo	Restring	pierścień
 Rule pack	Пакет правил	Paquete de reglas	Regelpaket	Pakiet reguł
@@ -110,15 +114,18 @@ Stack	Стек	Apilado	Aufbau	Stos
 stack	стек	apilado	Aufbau	stos
 Stack-up	Слои стека	Apilado de capas	Lagenaufbau	Stos warstw
 Standard	Стандарт	Estándar	Standard	Standard
+Standards	Нормы	Normas	Normen	Normy
 Tented vias	Переходные под маской	Vías cubiertas	Abgedeckte Vias	Przelotki pod maską
 text not in vector font	текст не векторным шрифтом	texto sin fuente vectorial	Text nicht in Vektorschrift	tekst nie czcionką wektorową
 text «{0}»	текст «{0}»	texto «{0}»	Text «{0}»	tekst «{0}»
 Texts with strokes under 0.15 mm: {0} — increase the font ratio.	Надписей с линией тоньше 0.15 мм: {0} — увеличьте ratio шрифта.	Textos con trazo de menos de 0.15 mm: {0} — aumente el ratio de la fuente.	Texte mit Strichstärke unter 0.15 mm: {0} — Ratio der Schrift erhöhen.	Napisy z kreską cieńszą niż 0.15 mm: {0} — zwiększ ratio czcionki.
 The board has {0} approved DRC messages. A check with the new rules drops approvals that no longer match — «Restore» cannot bring them back. Save a board version first.	На плате одобрено замечаний DRC: {0}. Проверка с новыми правилами удалит одобрения, которые перестанут совпадать, — кнопка «Вернуть» их не восстановит. Сохраните версию платы до настройки.	La placa tiene {0} mensajes DRC aprobados. Una comprobación con las reglas nuevas elimina las aprobaciones que ya no coincidan — «Restaurar» no las recupera. Guarde antes una versión de la placa.	Die Platine hat {0} genehmigte DRC-Meldungen. Eine Prüfung mit den neuen Regeln entfernt Genehmigungen, die nicht mehr passen — «Wiederherstellen» bringt sie nicht zurück. Speichern Sie vorher eine Version der Platine.	Płytka ma {0} zatwierdzonych komunikatów DRC. Kontrola z nowymi regułami usunie zatwierdzenia, które przestaną pasować — «Przywróć» ich nie odzyska. Najpierw zapisz wersję płytki.
 The board is smaller than 3 × 3 mm — not manufacturable at JLCPCB.	Плата меньше 3 × 3 мм — JLCPCB не делает.	La placa es menor de 3 × 3 mm — JLCPCB no la fabrica.	Die Platine ist kleiner als 3 × 3 mm — bei JLCPCB nicht fertigbar.	Płytka jest mniejsza niż 3 × 3 mm — JLCPCB jej nie wykona.
-the folder is added to Fusion's ULP list — <b>{0}</b> appears in Automation → Run ULP	папка добавляется в список ULP Fusion — <b>{0}</b> появится в Automation → Run ULP	la carpeta se añade a la lista de ULP de Fusion — <b>{0}</b> aparece en Automation → Run ULP	der Ordner wird der ULP-Liste von Fusion hinzugefügt — <b>{0}</b> erscheint unter Automation → Run ULP	folder zostaje dodany do listy ULP Fusion — <b>{0}</b> pojawi się w Automation → Run ULP
+the dmxON add-in is installed: the <b>dmxON</b> tab appears in the PCB and schematic editors — FabKit, JLC Rules, backup of the design folder, updates from GitHub	ставится надстройка dmxON: в редакторах платы и схемы появляется вкладка <b>dmxON</b> — FabKit, JLC Rules, бэкап папки проекта, обновления с GitHub	se instala el complemento dmxON: la pestaña <b>dmxON</b> aparece en los editores de placa y esquema — FabKit, JLC Rules, copia de la carpeta del diseño, actualizaciones desde GitHub	das dmxON-Add-in wird installiert: Der Reiter <b>dmxON</b> erscheint im Platinen- und Schaltplan-Editor — FabKit, JLC Rules, Sicherung des Designordners, Updates von GitHub	instalowany jest dodatek dmxON: w edytorach płytki i schematu pojawia się karta <b>dmxON</b> — FabKit, JLC Rules, kopia folderu projektu, aktualizacje z GitHuba
+The dmxON add-in is updated — restart Fusion to run the new version.	Надстройка dmxON обновлена — перезапустите Fusion, чтобы она заработала в новой версии.	El complemento dmxON se actualizó: reinicie Fusion para usar la nueva versión.	Das dmxON-Add-in wurde aktualisiert — Fusion neu starten, um die neue Version zu nutzen.	Dodatek dmxON zaktualizowano — uruchom ponownie Fusion, aby działała nowa wersja.
+the dmxON folders are added to Fusion's ULP, design rules and CAM lists — <b>{0}</b> is also in Automation → Run ULP; the built-in ULPs stay	папки dmxON добавляются в списки ULP, правил и CAM Fusion — <b>{0}</b> есть и в Automation → Run ULP; встроенные ULP остаются	las carpetas dmxON se añaden a las listas de ULP, reglas de diseño y CAM de Fusion — <b>{0}</b> también está en Automation → Run ULP; los ULP integrados se mantienen	die dmxON-Ordner werden zu den ULP-, Designregel- und CAM-Listen von Fusion hinzugefügt — <b>{0}</b> steht auch unter Automation → Run ULP; die eingebauten ULPs bleiben	foldery dmxON są dodawane do list ULP, reguł projektowych i CAM w Fusion — <b>{0}</b> jest też w Automation → Run ULP; wbudowane ULP pozostają
+The dmxON tab is already running and {0} is updated — it is also in Automation → Run ULP.	Вкладка dmxON уже работает, {0} обновлён — он есть и в Automation → Run ULP.	La pestaña dmxON ya funciona y {0} está actualizado; también está en Automation → Run ULP.	Der Reiter dmxON läuft bereits und {0} ist aktualisiert — es steht auch unter Automation → Run ULP.	Karta dmxON już działa, a {0} jest zaktualizowany — jest też w Automation → Run ULP.
 the project is copied to <tt>{0}</tt>	проект копируется в <tt>{0}</tt>	el proyecto se copia en <tt>{0}</tt>	das Projekt wird nach <tt>{0}</tt> kopiert	projekt zostaje skopiowany do <tt>{0}</tt>
-the rule pack and CAM jobs go to the DRC rules and CAM folders	пакет правил и задания CAM — в папки правил DRC и CAM	el paquete de reglas y los trabajos CAM van a las carpetas de reglas DRC y CAM	Regelpaket und CAM-Jobs kommen in die Ordner für DRC-Regeln und CAM	pakiet reguł i zadania CAM trafiają do folderów reguł DRC i CAM
 The setup is free. If it helped, support new versions	Настройщик бесплатный. Помог — поддержите новые версии	La herramienta es gratuita. Si le ayudó, apoye nuevas versiones	Das Werkzeug ist kostenlos. Wenn es geholfen hat, unterstützen Sie neue Versionen	Narzędzie jest bezpłatne. Jeśli pomogło, wesprzyj nowe wersje
 Thickness and mask to dmxON FabKit	Толщину и маску — в dmxON FabKit	Espesor y máscara a dmxON FabKit	Dicke und Lötstopp an dmxON FabKit	Grubość i maska do dmxON FabKit
 Thickness, mm	Толщина, мм	Espesor, mm	Dicke, mm	Grubość, mm
