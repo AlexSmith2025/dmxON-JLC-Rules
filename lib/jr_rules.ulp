@@ -6,10 +6,22 @@
 
 // ---------------------------------------------------------------- профили
 
-string JR_PID[]      = { "Standard", "Dense", "Extreme" };
-string JR_PRU[]      = { "Стандарт", "Плотный", "Предельный" };
-string JR_PNOTE_RU[] = { "с запасом, без доплат", "на пределе без доплат", "минимум JLCPCB, возможна доплата" };
-string JR_PNOTE_EN[] = { "with margin, no extra cost", "no-extra-cost limits", "JLCPCB minimum, may cost extra" };
+string JR_PID[] = { "Standard", "Dense", "Extreme" };     // имена в файлах и в ключе -profile
+
+// название и смысл профиля на языке lg
+string jr_pname(int lg, int p)
+{
+    if (p == 1) return Lx(lg, "Плотный", "Dense");
+    if (p == 2) return Lx(lg, "Предельный", "Extreme");
+    return Lx(lg, "Стандарт", "Standard");
+}
+
+string jr_pnote(int lg, int p)
+{
+    if (p == 1) return Lx(lg, "на пределе без доплат", "no-extra-cost limits");
+    if (p == 2) return Lx(lg, "минимум JLCPCB, возможна доплата", "JLCPCB minimum, may cost extra");
+    return Lx(lg, "с запасом, без доплат", "with margin, no extra cost");
+}
 
 real JR_THICK[] = { 0.4, 0.6, 0.8, 1.0, 1.2, 1.6, 2.0 };
 int  JR_NTHICK  = 7;
@@ -38,8 +50,8 @@ real   jr_dt[];                     // толщина диэлектрика, м
 string jr_dg[];                     // ткань препрега
 string jr_der[];                    // диэлектрическая проницаемость
 int    jr_nd = 0;
-string jr_snote_ru = "", jr_snote_en = "";   // замечание к стеку
-string jr_warn_ru = "", jr_warn_en = "";     // предупреждения профиля (через \n)
+string jr_snote = "";                        // замечание к стеку (нет такого у JLCPCB — взят ближайший)
+string jr_warns = "";                        // предупреждения профиля (через \n)
 
 string jr_mm(real v)
 {
@@ -76,14 +88,14 @@ int jr_stack_row(int n, real t, real oo, real oi)
 // ближайший существующий стек: сначала другая медь внутри, затем ближайшая толщина
 int jr_stack_pick()
 {
-    jr_snote_ru = ""; jr_snote_en = "";
+    jr_snote = "";
     int r = jr_stack_row(jr_n, jr_thick, jr_oo, jr_oi);
     if (r >= 0) return r;
     for (int k = 0; k < 3; k++) {
         r = jr_stack_row(jr_n, jr_thick, jr_oo, JR_OZ_IN[k]);
         if (r >= 0) {
-            jr_snote_ru = "Медь внутри " + num(jr_oi) + " oz для этого стека у JLCPCB нет — взято " + num(JR_OZ_IN[k]) + " oz.";
-            jr_snote_en = "Inner copper " + num(jr_oi) + " oz is not offered for this stack-up — using " + num(JR_OZ_IN[k]) + " oz.";
+            jr_snote = Lf("Медь внутри {0} oz для этого стека у JLCPCB нет — взято {1} oz.",
+                          "Inner copper {0} oz is not offered for this stack-up — using {1} oz.", num(jr_oi), num(JR_OZ_IN[k]), "");
             jr_oi = JR_OZ_IN[k];
             return r;
         }
@@ -100,26 +112,25 @@ int jr_stack_pick()
     if (best >= 0) {
         string g[];
         strsplit(g, JR_STACK[best], '|');
-        jr_snote_ru = "Толщины " + num(jr_thick) + " мм для " + istr(jr_n) + " слоёв у JLCPCB нет — взято " + g[1] + " мм.";
-        jr_snote_en = num(jr_thick) + " mm is not offered for " + istr(jr_n) + " layers — using " + g[1] + " mm.";
+        jr_snote = Lf("Толщины {0} мм для {1} слоёв у JLCPCB нет — взято {2} мм.",
+                      "{0} mm is not offered for {1} layers — using {2} mm.", num(jr_thick), istr(jr_n), g[1]);
         jr_thick = strtod(g[1]);
         jr_oi = strtod(g[3]);
     }
     return best;
 }
 
-void jr_warn(string ru, string en)
+void jr_warn(string txt)
 {
-    jr_warn_ru += ru + "\n";
-    jr_warn_en += en + "\n";
+    jr_warns += txt + "\n";
 }
 
 // все значения правил из входных параметров
 void jr_calc()
 {
     int ml = jr_n > 2;
-    jr_warn_ru = ""; jr_warn_en = "";
-    jr_snote_ru = ""; jr_snote_en = "";
+    jr_warns = "";
+    jr_snote = "";
     if (jr_lay[0] != 1) jr_default_layers();
 
     // стек слоёв
@@ -186,17 +197,17 @@ void jr_calc()
     jr_vstop = jr_tented ? 0.5 : 0;
     jr_dam = heavy ? 0.20 : 0.10;
 
-    if (jr_snote_ru != "") jr_warn(jr_snote_ru, jr_snote_en);
+    if (jr_snote != "") jr_warn(jr_snote);
     if (jr_thick < 0.6)
-        jr_warn("Плата тоньше 0.6 мм — JLCPCB проверяет вручную.", "Boards under 0.6 mm are reviewed manually by JLCPCB.");
+        jr_warn(L("Плата тоньше 0.6 мм — JLCPCB проверяет вручную.", "Boards under 0.6 mm are reviewed manually by JLCPCB."));
     if (jr_prof == 2 && ml && !heavy)
-        jr_warn("Дорожки 0.09 мм (3.5 mil) на многослойной плате: +20 % к цене.", "0.09 mm (3.5 mil) tracks on a multilayer board: +20 % price.");
+        jr_warn(L("Дорожки 0.09 мм (3.5 mil) на многослойной плате: +20 % к цене.", "0.09 mm (3.5 mil) tracks on a multilayer board: +20 % price."));
     if (jr_prof == 2)
-        jr_warn("Переходные 0.15/0.25 мм: на странице заказа выбрать «Min via hole size» — доплата.",
-                "0.15/0.25 mm vias: choose «Min via hole size» on the order page — extra cost.");
+        jr_warn(L("Переходные 0.15/0.25 мм: на странице заказа выбрать «Min via hole size» — доплата.",
+                  "0.15/0.25 mm vias: choose «Min via hole size» on the order page — extra cost."));
     if (ml && jr_n >= 6)
-        jr_warn("6+ слоёв: переходные в площадках JLCPCB заливает и закрывает бесплатно (POFV).",
-                "6+ layers: via-in-pad is filled and capped free of charge (POFV).");
+        jr_warn(L("6+ слоёв: переходные в площадках JLCPCB заливает и закрывает бесплатно (POFV).",
+                  "6+ layers: via-in-pad is filled and capped free of charge (POFV)."));
 }
 
 // ---------------------------------------------------------------- имена и подписи
@@ -213,10 +224,15 @@ string jr_name()
     return s + "_" + JR_PID[jr_prof];
 }
 
-// «2 слоя», «6 слоёв»
-string jr_layers_ru()
+// «4 layers», «4 слоя», «6 слоёв», «4 warstwy», «6 warstw»
+string jr_layers_l(int lg)
 {
-    return istr(jr_n) + (jr_n < 5 ? " слоя" : " слоёв");
+    string n = istr(jr_n);
+    if (lg == 1) return n + (jr_n < 5 ? " слоя" : " слоёв");
+    if (lg == 2) return n + " capas";
+    if (lg == 3) return n + " Lagen";
+    if (lg == 4) return n + (jr_n < 5 ? " warstwy" : " warstw");
+    return n + " layers";
 }
 
 string jr_setup_string()
@@ -241,19 +257,12 @@ string jr_thick_txt()
     return t;
 }
 
-// одна строка параметров (для описания и сводки)
-string jr_brief(int ru)
+// одна строка параметров на языке lg (для описания и сводки)
+string jr_brief(int lg)
 {
-    string s = "";
-    if (ru) {
-        s += jr_thick_txt() + " мм · медь " + num(jr_oo) + " oz";
-        if (jr_n > 2) s += " / внутри " + num(jr_oi) + " oz";
-    }
-    else {
-        s += jr_thick_txt() + " mm · copper " + num(jr_oo) + " oz";
-        if (jr_n > 2) s += " / inner " + num(jr_oi) + " oz";
-    }
-    return s;
+    if (jr_n > 2)
+        return Lfx(lg, "{0} мм · медь {1} oz / внутри {2} oz", "{0} mm · copper {1} oz / inner {2} oz", jr_thick_txt(), num(jr_oo), num(jr_oi));
+    return Lfx(lg, "{0} мм · медь {1} oz", "{0} mm · copper {1} oz", jr_thick_txt(), num(jr_oo), "");
 }
 
 string jr_via_txt()
@@ -267,16 +276,16 @@ string jr_via_txt()
 string jr_dru_text()
 {
     string nl = "\n";
-    string title_en = "dmxON · JLCPCB " + istr(jr_n) + " layers · " + JR_PID[jr_prof];
-    string title_ru = "dmxON · JLCPCB " + jr_layers_ru() + " · " + JR_PRU[jr_prof];
-    string den = "<b>" + title_en + "</b> (" + JR_PNOTE_EN[jr_prof] + ")<br>" +
-        jr_brief(0) + " · stack " + jr_setup_string() + "<br>" +
-        "Track/space " + num(jr_tw) + "/" + num(jr_cl) + " mm · via " + jr_via_txt() + " mm · edge " + num(jr_edge) + " mm<br>" +
-        JR_NAME + " " + JR_VERSION + " · " + JR_AUTHOR + " " + JR_YEAR;
-    string dru = "<b>" + h(title_ru) + "</b> (" + h(JR_PNOTE_RU[jr_prof]) + ")<br>" +
-        h(jr_brief(1)) + " &#183; " + h("стек ") + jr_setup_string() + "<br>" +
-        h("Дорожка/зазор " + num(jr_tw) + "/" + num(jr_cl) + " мм · переходное " + jr_via_txt() + " мм · до края " + num(jr_edge) + " мм") + "<br>" +
-        JR_NAME + " " + JR_VERSION + " &#183; " + JR_AUTHOR + " " + JR_YEAR;
+    // описание на всех языках: Fusion показывает то, что совпадает с языком его интерфейса
+    string desc = "";
+    for (int lg = 0; lg < N_LANG; lg++) {
+        string d = "<b>" + h("dmxON · JLCPCB " + jr_layers_l(lg) + " · " + jr_pname(lg, jr_prof)) + "</b> (" + h(jr_pnote(lg, jr_prof)) + ")<br>" +
+            h(jr_brief(lg) + " · " + Lx(lg, "стек", "stack") + " ") + jr_setup_string() + "<br>" +
+            h(Lfx(lg, "Дорожка/зазор {0} мм · переходное {1} мм · до края {2} мм", "Track/space {0} mm · via {1} mm · edge {2} mm",
+                  num(jr_tw) + "/" + num(jr_cl), jr_via_txt(), num(jr_edge))) + "<br>" +
+            h(JR_NAME + " " + JR_VERSION + " · " + JR_AUTHOR + " " + JR_YEAR);
+        desc += "description[" + LANG_CODE[lg] + "] = " + d + nl;
+    }
 
     string cu = "", iso = "";
     for (int l = 1; l <= 16; l++) cu += (l > 1 ? " " : "") + jr_mm((l == 1 || l == 16) ? jr_cuo : jr_cui);
@@ -288,8 +297,7 @@ string jr_dru_text()
     string vrv;
     sprintf(vrv, "%.6f", jr_vrv);
     string t = "";
-    t += "description[en] = " + asc(den) + nl;
-    t += "description[ru] = " + dru + nl;
+    t += desc;
     t += "layerSetup = " + jr_setup_string() + nl;
     t += "mtCopper = " + cu + nl;
     t += "mtIsolate = " + iso + nl;
@@ -433,8 +441,6 @@ string jr_cam_text()
     for (int g = 1; g <= jr_n - 2; g++) d_en += ", G" + istr(g);
     d_en += ", GBL, GTS, GBS, GTP, GBP, GTO, GBO, GKO, XLN (plated and non-plated holes in one file).<p>Copper layers: " + jr_layers_txt() + ".<p>" +
         JR_NAME + " " + JR_VERSION + " · " + JR_AUTHOR + " " + JR_YEAR;
-    string d_ru = "<b>dmxON · JLCPCB " + jr_layers_ru() + ", задание CAM</b><p>Gerber RS-274X и Excellon с именами файлов JLCPCB. Слои меди: " + jr_layers_txt() + ".<p>" +
-        JR_NAME + " " + JR_VERSION + " · " + JR_AUTHOR + " " + JR_YEAR;
 
     string ly = "";
     ly += jr_cam_layer("Board Outline", "GKO", "46, 20",
@@ -456,7 +462,7 @@ string jr_cam_text()
 
     string s = "{\n";
     s += "    \"author\": {\n        \"email\": \"\",\n        \"name\": " + jr_q(JR_AUTHOR) + "\n    },\n";
-    s += "    \"description\": {\n        \"EN\": " + jr_json(d_en) + ",\n        \"RU\": " + jr_json(d_ru) + "\n    },\n";
+    s += "    \"description\": {\n        \"EN\": " + jr_json(d_en) + "\n    },\n";
     s += "    \"output_type\": \"directory\",\n";
     s += "    \"outputs\": [\n";
     s += "        {\n";

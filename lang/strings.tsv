@@ -1,0 +1,149 @@
+en	ru	es	de	pl
+0.09 mm (3.5 mil) tracks on a multilayer board: +20 % price.	Дорожки 0.09 мм (3.5 mil) на многослойной плате: +20 % к цене.	Pistas de 0.09 mm (3.5 mil) en una placa multicapa: +20 % al precio.	Leiterbahnen 0.09 mm (3.5 mil) auf einer Mehrlagenplatine: +20 % Aufpreis.	Ścieżki 0.09 mm (3.5 mil) na płytce wielowarstwowej: +20 % do ceny.
+0.15/0.25 mm vias: choose «Min via hole size» on the order page — extra cost.	Переходные 0.15/0.25 мм: на странице заказа выбрать «Min via hole size» — доплата.	Vías de 0.15/0.25 mm: elija «Min via hole size» en la página del pedido — coste adicional.	Vias 0.15/0.25 mm: auf der Bestellseite «Min via hole size» wählen — Aufpreis.	Przelotki 0.15/0.25 mm: wybierz «Min via hole size» na stronie zamówienia — dopłata.
+6+ layers: via-in-pad is filled and capped free of charge (POFV).	6+ слоёв: переходные в площадках JLCPCB заливает и закрывает бесплатно (POFV).	6+ capas: las vías en pad se rellenan y tapan gratis (POFV).	Ab 6 Lagen: Via-in-Pad wird kostenlos gefüllt und abgedeckt (POFV).	6+ warstw: przelotki w padach są wypełniane i zakrywane bezpłatnie (POFV).
+above the allowed maximum	больше допустимого максимума	por encima del máximo permitido	über dem zulässigen Maximum	powyżej dopuszczalnego maksimum
+Actions	Что сделать	Acciones	Aktionen	Działania
+acute angle	острый угол	ángulo agudo	spitzer Winkel	kąt ostry
+Already installed — «Install» updates the files.	Уже установлено — «Установить» обновит файлы.	Ya instalado — «Instalar» actualiza los archivos.	Bereits installiert — «Installieren» aktualisiert die Dateien.	Już zainstalowano — «Zainstaluj» zaktualizuje pliki.
+Apply	Настроить	Aplicar	Anwenden	Zastosuj
+approved	одобрено	aprobados	genehmigt	zatwierdzone
+approved DRC	одобрено DRC	DRC aprobados	DRC genehmigt	zatwierdzone DRC
+blind via	глухое переходное	vía ciega	Blind Via	przelotka ślepa
+Board	Плата	Placa	Platine	Płytka
+Board check	Проверка платы	Comprobación de la placa	Platinenprüfung	Kontrola płytki
+board line	линия на плате	línea en la placa	Linie auf der Platine	linia na płytce
+board shape	фигура на плате	forma en la placa	Form auf der Platine	kształt na płytce
+board stack-up	в стеке платы	apilado de la placa	Lagenaufbau der Platine	stos warstw płytki
+Board {0} mm exceeds {1} mm.	Плата {0} мм больше предела {1} мм.	La placa de {0} mm supera {1} mm.	Platine {0} mm überschreitet {1} mm.	Płytka {0} mm przekracza {1} mm.
+Boards under 0.6 mm are reviewed manually by JLCPCB.	Плата тоньше 0.6 мм — JLCPCB проверяет вручную.	JLCPCB revisa manualmente las placas de menos de 0.6 mm.	Platinen unter 0.6 mm prüft JLCPCB manuell.	Płytki cieńsze niż 0.6 mm JLCPCB sprawdza ręcznie.
+CAM job	задание CAM	trabajo CAM	CAM-Job	zadanie CAM
+Cancel	Отмена	Cancelar	Abbrechen	Anuluj
+Cannot copy the files to:	Не удалось скопировать файлы в:	No se pueden copiar los archivos a:	Dateien können nicht kopiert werden nach:	Nie można skopiować plików do:
+Cannot find the user folder.	Не удалось определить папку пользователя.	No se encuentra la carpeta del usuario.	Benutzerordner nicht gefunden.	Nie znaleziono folderu użytkownika.
+Cannot write the rules file:	Не удалось записать файл правил:	No se puede escribir el archivo de reglas:	Regeldatei kann nicht geschrieben werden:	Nie można zapisać pliku reguł:
+circle	окружность	círculo	Kreis	okrąg
+clearance between nets	зазор между цепями	separación entre redes	Abstand zwischen Netzen	odstęp między sieciami
+computed	расчёт	calculado	berechnet	obliczono
+copper	медь	cobre	Kupfer	miedź
+copper in a restricted area	медь в запретной зоне	cobre en zona restringida	Kupfer in Sperrfläche	miedź w strefie zabronionej
+Copper layers	Слоёв меди	Capas de cobre	Kupferlagen	Warstwy miedzi
+copper on layers	медь на слоях	cobre en capas	Kupfer auf Lagen	miedź na warstwach
+copper too close to the board edge	медь у края платы	cobre demasiado cerca del borde	Kupfer zu nah am Platinenrand	miedź za blisko krawędzi płytki
+core	ядро	núcleo	Kern	rdzeń
+dam	перемычка	puente de máscara	Lötstoppsteg	mostek maski
+Dense	Плотный	Denso	Dicht	Gęsty
+detected	определено	detectado	erkannt	wykryto
+different nets overlap	перекрытие разных цепей	solape de redes distintas	Überlappung verschiedener Netze	nakładanie się różnych sieci
+Done. Restart Fusion — {0} will appear in Automation → Run ULP.	Готово. Перезапустите Fusion — {0} появится в Automation → Run ULP.	Listo. Reinicie Fusion — {0} aparecerá en Automation → Run ULP.	Fertig. Fusion neu starten — {0} erscheint unter Automation → Run ULP.	Gotowe. Uruchom ponownie Fusion — {0} pojawi się w Automation → Run ULP.
+drill below the minimum	сверло меньше минимума	taladro por debajo del mínimo	Bohrung unter dem Minimum	wiercenie poniżej minimum
+Drills below {0} mm: holes under 0.3 mm cost extra at JLCPCB — enlarge them or choose the Extreme profile.	Сверло меньше {0} мм: у JLCPCB отверстия меньше 0.3 мм стоят дороже — увеличьте сверло или выберите профиль «Предельный».	Taladros de menos de {0} mm: en JLCPCB los agujeros de menos de 0.3 mm tienen recargo — agrándelos o elija el perfil Extremo.	Bohrungen unter {0} mm: Löcher unter 0.3 mm kosten bei JLCPCB Aufpreis — vergrößern oder Profil Extrem wählen.	Wiercenia poniżej {0} mm: otwory mniejsze niż 0.3 mm są w JLCPCB dodatkowo płatne — powiększ je lub wybierz profil Ekstremalny.
+edge	до края	borde	Rand	krawędź
+Edge / hole gap	До края / между отверстиями	Borde / entre agujeros	Rand / Lochabstand	Krawędź / odstęp otworów
+Error list — ERRORS panel; rules — DRC command.	Список ошибок — панель ERRORS; правила — команда DRC.	Lista de errores — panel ERRORS; reglas — comando DRC.	Fehlerliste — Bereich ERRORS; Regeln — Befehl DRC.	Lista błędów — panel ERRORS; reguły — polecenie DRC.
+Errors	Ошибок	Errores	Fehler	Błędy
+Extreme	Предельный	Extremo	Extrem	Ekstremalny
+files	файлов	archivos	Dateien	plików
+Files only…	Только файлы…	Solo archivos…	Nur Dateien…	Tylko pliki…
+Folder for the rule files	Папка для файлов правил	Carpeta para los archivos de reglas	Ordner für die Regeldateien	Folder na pliki reguł
+Fusion folders restored. Restart Fusion.\nThe copied files remain in:	Папки Fusion возвращены. Перезапустите Fusion.\nСкопированные файлы остались в:	Carpetas de Fusion restauradas. Reinicie Fusion.\nLos archivos copiados siguen en:	Fusion-Ordner wiederhergestellt. Fusion neu starten.\nDie kopierten Dateien bleiben in:	Foldery Fusion przywrócone. Uruchom ponownie Fusion.\nSkopiowane pliki pozostają w:
+Fusion reported no DRC result — open DRC manually.	Fusion не сообщил результат проверки — откройте DRC вручную.	Fusion no devolvió el resultado del DRC — ábralo manualmente.	Fusion hat kein DRC-Ergebnis gemeldet — DRC manuell öffnen.	Fusion nie zwrócił wyniku DRC — otwórz DRC ręcznie.
+Fusion's built-in ULPs stay in place	встроенные ULP Fusion остаются на месте	los ULP integrados de Fusion se mantienen	die integrierten ULPs von Fusion bleiben erhalten	wbudowane ULP Fusion pozostają na miejscu
+graphics of {0}	графика {0}	gráficos de {0}	Grafik von {0}	grafika {0}
+holes too close together	отверстия слишком близко	agujeros demasiado juntos	Löcher zu dicht beieinander	otwory zbyt blisko siebie
+inner	внутри	interior	innen	wewnątrz
+Inner copper	Медь внутри	Cobre interior	Kupfer innen	Miedź wewnętrzna
+Inner copper {0} oz is not offered for this stack-up — using {1} oz.	Медь внутри {0} oz для этого стека у JLCPCB нет — взято {1} oz.	JLCPCB no ofrece cobre interior de {0} oz para este apilado — se usa {1} oz.	Innenkupfer {0} oz gibt es für diesen Aufbau nicht — verwendet wird {1} oz.	Miedź wewnętrzna {0} oz nie jest dostępna dla tego stosu — użyto {1} oz.
+Install	Установить	Instalar	Installieren	Zainstaluj
+Installation	Установка	Instalación	Installation	Instalacja
+Installation into Autodesk Fusion:	Установка в Autodesk Fusion:	Instalación en Autodesk Fusion:	Installation in Autodesk Fusion:	Instalacja w Autodesk Fusion:
+invalid polygon	ошибка полигона	polígono no válido	ungültiges Polygon	nieprawidłowy wielokąt
+JLCPCB board setup	настройка платы под JLCPCB	Configuración de la placa para JLCPCB	Platinen-Einrichtung für JLCPCB	Konfiguracja płytki pod JLCPCB
+JLCPCB minimum, may cost extra	минимум JLCPCB, возможна доплата	mínimo de JLCPCB, puede tener recargo	JLCPCB-Minimum, ggf. Aufpreis	minimum JLCPCB, możliwa dopłata
+JLCPCB setup summary	итог настройки JLCPCB	Resumen de la configuración JLCPCB	Zusammenfassung der JLCPCB-Einrichtung	Podsumowanie konfiguracji JLCPCB
+keep-out area	зона запрета	zona de exclusión	Sperrfläche	strefa wykluczenia
+Language	Язык	Idioma	Sprache	Język
+Layer {0} is outside the {1}-layer stack-up but holds: {2}. Move it off the layer or choose more layers.	Слой {0} не входит в стек из {1} слоёв, а на нём: {2}. Уберите это со слоя или выберите больше слоёв.	La capa {0} está fuera del apilado de {1} capas, pero contiene: {2}. Quítelo de la capa o elija más capas.	Lage {0} liegt außerhalb des Aufbaus mit {1} Lagen, enthält aber: {2}. Entfernen Sie es von der Lage oder wählen Sie mehr Lagen.	Warstwa {0} jest poza stosem {1} warstw, a zawiera: {2}. Usuń to z warstwy lub wybierz więcej warstw.
+length matching	согласование длин	igualación de longitudes	Längenabgleich	wyrównanie długości
+loaded into the board	загружены в плату	cargadas en la placa	in die Platine geladen	wczytane do płytki
+Mask	Маска	Máscara	Lötstopp	Maska
+Mask colour	Цвет маски	Color de máscara	Lötstoppfarbe	Kolor maski
+micro via	микропереходное	microvía	Microvia	mikroprzelotka
+mm	мм	mm	mm	mm
+more than 8 layers — the pack covers up to 8	больше 8 слоёв — набор до 8	más de 8 capas — el paquete cubre hasta 8	mehr als 8 Lagen — das Paket deckt bis 8 ab	ponad 8 warstw — pakiet obejmuje do 8
+narrow gap in copper	узкая щель в меди	hueco estrecho en el cobre	schmaler Spalt im Kupfer	wąska szczelina w miedzi
+Net class {0} «{1}» is below the JLCPCB minimum.	Класс цепей {0} «{1}» ниже минимума JLCPCB.	La clase de red {0} «{1}» está por debajo del mínimo de JLCPCB.	Netzklasse {0} «{1}» liegt unter dem JLCPCB-Minimum.	Klasa sieci {0} «{1}» jest poniżej minimum JLCPCB.
+Net classes not below the minimum	Классы цепей не ниже минимума	Clases de red no por debajo del mínimo	Netzklassen nicht unter dem Minimum	Klasy sieci nie poniżej minimum
+Net classes raised to the minimum	Классы цепей подняты до минимума	Clases de red elevadas al mínimo	Netzklassen auf das Minimum angehoben	Klasy sieci podniesione do minimum
+No board outline (layer 20 Dimension).	Нет контура платы (слой 20 Dimension).	No hay contorno de placa (capa 20 Dimension).	Keine Platinenkontur (Lage 20 Dimension).	Brak obrysu płytki (warstwa 20 Dimension).
+No errors	Ошибок нет	Sin errores	Keine Fehler	Brak błędów
+No findings.	Замечаний нет.	Sin observaciones.	Keine Befunde.	Brak uwag.
+no objects found — Fusion marks the layer as used, check it by hand	объекты не найдены — Fusion отмечает слой занятым, проверьте его вручную	no se encontraron objetos — Fusion marca la capa como usada, revísela a mano	keine Objekte gefunden — Fusion markiert die Lage als belegt, bitte manuell prüfen	nie znaleziono obiektów — Fusion oznacza warstwę jako zajętą, sprawdź ją ręcznie
+no-extra-cost limits	на пределе без доплат	límites sin recargo	Grenzen ohne Aufpreis	granice bez dopłat
+Non-plated holes below 0.5 mm: {0} (smallest {1}) — JLCPCB minimum is 0.5.	Неметаллизированных отверстий меньше 0.5 мм: {0} (наименьшее {1}) — у JLCPCB минимум 0.5.	Agujeros no metalizados de menos de 0.5 mm: {0} (el menor {1}) — el mínimo de JLCPCB es 0.5.	Nicht durchkontaktierte Löcher unter 0.5 mm: {0} (kleinstes {1}) — JLCPCB-Minimum ist 0.5.	Otwory niemetalizowane poniżej 0.5 mm: {0} (najmniejszy {1}) — minimum JLCPCB to 0.5.
+object on a wrong layer	объект на неподходящем слое	objeto en una capa incorrecta	Objekt auf falscher Lage	obiekt na niewłaściwej warstwie
+off grid	вне сетки	fuera de la rejilla	außerhalb des Rasters	poza siatką
+Outer copper	Медь снаружи	Cobre exterior	Kupfer außen	Miedź zewnętrzna
+pad of {0}	площадка {0}	pad de {0}	Pad von {0}	pad {0}
+pad to pad	площадки разных цепей	pad a pad	Pad zu Pad	pad–pad
+parts in each other's keep-out	детали в зоне исключения	componentes en la zona de exclusión de otros	Bauteile in fremder Sperrfläche	elementy w strefie wykluczenia innych
+pour {0}	полигон {0}	relleno {0}	Fläche {0}	wylewka {0}
+prepreg	препрег	preimpregnado	Prepreg	prepreg
+Previous rules saved	Прежние правила сохранены	Reglas anteriores guardadas	Bisherige Regeln gesichert	Poprzednie reguły zapisane
+Profile	Профиль	Perfil	Profil	Profil
+PTH ring	Поясок выводов	Anillo PTH	Restring THT	Pierścień PTH
+rectangle	прямоугольник	rectángulo	Rechteck	prostokąt
+Remove	Удалить	Quitar	Entfernen	Usuń
+Restart Fusion after installing.	После установки перезапустите Fusion.	Reinicie Fusion después de instalar.	Starten Sie Fusion nach der Installation neu.	Po instalacji uruchom ponownie Fusion.
+Restore previous rules	Вернуть прежние правила	Restaurar reglas anteriores	Bisherige Regeln wiederherstellen	Przywróć poprzednie reguły
+ring	поясок	anillo	Restring	pierścień
+Rule pack	Пакет правил	Paquete de reglas	Regelpaket	Pakiet reguł
+Rule pack and CAM into Documents/EAGLE	Пакет правил и CAM — в Документы/EAGLE	Paquete de reglas y CAM en Documentos/EAGLE	Regelpaket und CAM nach Dokumente/EAGLE	Pakiet reguł i CAM do Dokumenty/EAGLE
+Rule pack written	Пакет правил записан	Paquete de reglas guardado	Regelpaket geschrieben	Pakiet reguł zapisany
+Run from the board editor (or with -export <folder> for the rule pack only).	Запустите из редактора платы (или с ключом -export <папка> — только пакет правил).	Ejecútelo desde el editor de placa (o con -export <carpeta> solo para el paquete de reglas).	Im Board-Editor starten (oder mit -export <Ordner> nur für das Regelpaket).	Uruchom w edytorze płytki (lub z -export <folder> tylko dla pakietu reguł).
+Silkscreen lines thinner than 0.15 mm: {0} (thinnest {1}) — will print thin or broken.	Линий шелкографии тоньше 0.15 мм: {0} (самая тонкая {1}) — напечатаются тонко или с разрывами.	Líneas de serigrafía de menos de 0.15 mm: {0} (la más fina {1}) — se imprimirán finas o cortadas.	Bestückungsdrucklinien dünner als 0.15 mm: {0} (dünnste {1}) — werden dünn oder lückenhaft gedruckt.	Linie opisu cieńsze niż 0.15 mm: {0} (najcieńsza {1}) — wydrukują się cienko lub z przerwami.
+silkscreen near exposed copper	шелкография у открытой меди	serigrafía junto a cobre expuesto	Bestückungsdruck an offenem Kupfer	opis przy odsłoniętej miedzi
+Silkscreen texts below 1.0 mm: {0} (smallest {1}) — may be unreadable.	Надписей шелкографии ниже 1.0 мм: {0} (самая мелкая {1}) — могут не читаться.	Textos de serigrafía de menos de 1.0 mm: {0} (el menor {1}) — pueden no leerse.	Bestückungsdrucktexte unter 1.0 mm: {0} (kleinster {1}) — evtl. unleserlich.	Napisy opisu mniejsze niż 1.0 mm: {0} (najmniejszy {1}) — mogą być nieczytelne.
+SMD pad size	размер площадки SMD	tamaño de pad SMD	SMD-Padgröße	rozmiar pada SMD
+solder mask	маска	máscara de soldadura	Lötstoppmaske	maska lutownicza
+Stack	Стек	Apilado	Aufbau	Stos
+stack	стек	apilado	Aufbau	stos
+Stack-up	Слои стека	Apilado de capas	Lagenaufbau	Stos warstw
+Standard	Стандарт	Estándar	Standard	Standard
+Tented vias	Переходные под маской	Vías cubiertas	Abgedeckte Vias	Przelotki pod maską
+text not in vector font	текст не векторным шрифтом	texto sin fuente vectorial	Text nicht in Vektorschrift	tekst nie czcionką wektorową
+text «{0}»	текст «{0}»	texto «{0}»	Text «{0}»	tekst «{0}»
+Texts with strokes under 0.15 mm: {0} — increase the font ratio.	Надписей с линией тоньше 0.15 мм: {0} — увеличьте ratio шрифта.	Textos con trazo de menos de 0.15 mm: {0} — aumente el ratio de la fuente.	Texte mit Strichstärke unter 0.15 mm: {0} — Ratio der Schrift erhöhen.	Napisy z kreską cieńszą niż 0.15 mm: {0} — zwiększ ratio czcionki.
+The board has {0} approved DRC messages. A check with the new rules drops approvals that no longer match — «Restore» cannot bring them back. Save a board version first.	На плате одобрено замечаний DRC: {0}. Проверка с новыми правилами удалит одобрения, которые перестанут совпадать, — кнопка «Вернуть» их не восстановит. Сохраните версию платы до настройки.	La placa tiene {0} mensajes DRC aprobados. Una comprobación con las reglas nuevas elimina las aprobaciones que ya no coincidan — «Restaurar» no las recupera. Guarde antes una versión de la placa.	Die Platine hat {0} genehmigte DRC-Meldungen. Eine Prüfung mit den neuen Regeln entfernt Genehmigungen, die nicht mehr passen — «Wiederherstellen» bringt sie nicht zurück. Speichern Sie vorher eine Version der Platine.	Płytka ma {0} zatwierdzonych komunikatów DRC. Kontrola z nowymi regułami usunie zatwierdzenia, które przestaną pasować — «Przywróć» ich nie odzyska. Najpierw zapisz wersję płytki.
+The board is smaller than 3 × 3 mm — not manufacturable at JLCPCB.	Плата меньше 3 × 3 мм — JLCPCB не делает.	La placa es menor de 3 × 3 mm — JLCPCB no la fabrica.	Die Platine ist kleiner als 3 × 3 mm — bei JLCPCB nicht fertigbar.	Płytka jest mniejsza niż 3 × 3 mm — JLCPCB jej nie wykona.
+the folder is added to Fusion's ULP list — <b>{0}</b> appears in Automation → Run ULP	папка добавляется в список ULP Fusion — <b>{0}</b> появится в Automation → Run ULP	la carpeta se añade a la lista de ULP de Fusion — <b>{0}</b> aparece en Automation → Run ULP	der Ordner wird der ULP-Liste von Fusion hinzugefügt — <b>{0}</b> erscheint unter Automation → Run ULP	folder zostaje dodany do listy ULP Fusion — <b>{0}</b> pojawi się w Automation → Run ULP
+the project is copied to <tt>{0}</tt>	проект копируется в <tt>{0}</tt>	el proyecto se copia en <tt>{0}</tt>	das Projekt wird nach <tt>{0}</tt> kopiert	projekt zostaje skopiowany do <tt>{0}</tt>
+the rule pack and CAM jobs go to the DRC rules and CAM folders	пакет правил и задания CAM — в папки правил DRC и CAM	el paquete de reglas y los trabajos CAM van a las carpetas de reglas DRC y CAM	Regelpaket und CAM-Jobs kommen in die Ordner für DRC-Regeln und CAM	pakiet reguł i zadania CAM trafiają do folderów reguł DRC i CAM
+The setup is free. If it helped, support new versions	Настройщик бесплатный. Помог — поддержите новые версии	La herramienta es gratuita. Si le ayudó, apoye nuevas versiones	Das Werkzeug ist kostenlos. Wenn es geholfen hat, unterstützen Sie neue Versionen	Narzędzie jest bezpłatne. Jeśli pomogło, wesprzyj nowe wersje
+Thickness and mask to dmxON FabKit	Толщину и маску — в dmxON FabKit	Espesor y máscara a dmxON FabKit	Dicke und Lötstopp an dmxON FabKit	Grubość i maska do dmxON FabKit
+Thickness, mm	Толщина, мм	Espesor, mm	Dicke, mm	Grubość, mm
+To restore the previous rules: run the setup again and press «Restore previous rules».	Вернуть прежние правила: запустите настройщик ещё раз и нажмите «Вернуть прежние правила».	Para restaurar las reglas anteriores: ejecute la herramienta de nuevo y pulse «Restaurar reglas anteriores».	Bisherige Regeln wiederherstellen: Werkzeug erneut starten und «Bisherige Regeln wiederherstellen» drücken.	Aby przywrócić poprzednie reguły: uruchom narzędzie ponownie i naciśnij «Przywróć poprzednie reguły».
+Track / space	Дорожка / зазор	Pista / separación	Leiterbahn / Abstand	Ścieżka / odstęp
+track {0}	дорожка {0}	pista {0}	Leiterbahn {0}	ścieżka {0}
+track/space	дорожка/зазор	pista/separación	Bahn/Abstand	ścieżka/odstęp
+Track/space {0} mm · via {1} mm · edge {2} mm	Дорожка/зазор {0} мм · переходное {1} мм · до края {2} мм	Pista/separación {0} mm · vía {1} mm · borde {2} mm	Bahn/Abstand {0} mm · Via {1} mm · Rand {2} mm	Ścieżka/odstęp {0} mm · przelotka {1} mm · krawędź {2} mm
+track/space/drill, mm	дорожка/зазор/сверло, мм	pista/separación/taladro, mm	Bahn/Abstand/Bohrung, mm	ścieżka/odstęp/wiercenie, mm
+Tracks thinner than {0} mm: {1} (thinnest {2}) — DRC will flag them.	Дорожек тоньше {0} мм: {1} (самая тонкая {2}) — DRC отметит.	Pistas de menos de {0} mm: {1} (la más fina {2}) — el DRC las marcará.	Leiterbahnen dünner als {0} mm: {1} (dünnste {2}) — der DRC wird sie melden.	Ścieżki cieńsze niż {0} mm: {1} (najcieńsza {2}) — DRC je zgłosi.
+unrouted connections	неразведённые соединения	conexiones sin rutear	unverlegte Verbindungen	niepoprowadzone połączenia
+V-cut panel: copper 0.4 mm from edge	Панель V-cut: медь от края 0.4 мм	Panel V-cut: cobre a 0.4 mm del borde	V-Cut-Nutzen: Kupfer 0.4 mm vom Rand	Panel V-cut: miedź 0.4 mm od krawędzi
+Via	Переходное	Vía	Via	Przelotka
+via	переходное	vía	Via	przelotka
+via in a restricted area	переходное в запретной зоне	vía en zona restringida	Via in Sperrfläche	przelotka w strefie zabronionej
+via {0}	переходное {0}	vía {0}	Via {0}	przelotka {0}
+Vias below 0.3 mm: {0} — small-hole surcharge.	Переходных меньше 0.3 мм: {0} — доплата за малые отверстия.	Vías de menos de 0.3 mm: {0} — recargo por agujeros pequeños.	Vias unter 0.3 mm: {0} — Aufpreis für kleine Löcher.	Przelotki poniżej 0.3 mm: {0} — dopłata za małe otwory.
+Vias drilled below {0} mm: {1} (smallest {2}).	Переходных со сверлом меньше {0} мм: {1} (наименьшее {2}).	Vías con taladro de menos de {0} mm: {1} (la menor {2}).	Vias mit Bohrung unter {0} mm: {1} (kleinste {2}).	Przelotki z wierceniem poniżej {0} mm: {1} (najmniejsza {2}).
+vias open	переходные открыты	vías descubiertas	Vias offen	przelotki odkryte
+vias ≤ 0.5 tented	переходные ≤ 0.5 под маской	vías ≤ 0.5 cubiertas	Vias ≤ 0.5 abgedeckt	przelotki ≤ 0.5 pod maską
+warnings	предупреждений	advertencias	Warnungen	ostrzeżenia
+width below the minimum	ширина меньше минимума	ancho por debajo del mínimo	Breite unter dem Minimum	szerokość poniżej minimum
+wire stub	обрывок дорожки	trozo de pista suelto	Leiterbahnstummel	urwana ścieżka
+with margin, no extra cost	с запасом, без доплат	con margen, sin recargo	mit Reserve, ohne Aufpreis	z zapasem, bez dopłat
+Written	Записано	Guardado	Geschrieben	Zapisano
+{0} mm is not offered for {1} layers — using {2} mm.	Толщины {0} мм для {1} слоёв у JLCPCB нет — взято {2} мм.	JLCPCB no ofrece {0} mm para {1} capas — se usa {2} mm.	{0} mm gibt es für {1} Lagen nicht — verwendet wird {2} mm.	{0} mm nie jest dostępne dla {1} warstw — użyto {2} mm.
+{0} mm · copper {1} oz	{0} мм · медь {1} oz	{0} mm · cobre {1} oz	{0} mm · Kupfer {1} oz	{0} mm · miedź {1} oz
+{0} mm · copper {1} oz / inner {2} oz	{0} мм · медь {1} oz / внутри {2} oz	{0} mm · cobre {1} oz / interior {2} oz	{0} mm · Kupfer {1} oz / innen {2} oz	{0} mm · miedź {1} oz / wewnątrz {2} oz

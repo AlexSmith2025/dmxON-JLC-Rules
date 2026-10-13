@@ -1,19 +1,16 @@
-# Стеки слоёв JLCPCB / JLCPCB layer stack-ups
+# JLCPCB layer stack-ups
 
-Все стеки, которые знает настройщик `dmxON_JLC_Setup.ulp` (таблица `lib/jr_stack.ulp`). Это стандартные стеки JLCPCB — «No requirement» на странице заказа, без контроля импеданса.
 Every stack-up the `dmxON_JLC_Setup.ulp` setup knows (table `lib/jr_stack.ulp`). These are the JLCPCB default stack-ups — «No requirement» on the order page, no impedance control.
 
-Диэлектрики перечислены сверху вниз: **P** — препрег (ткань и Er), **C** — ядро. Медь внутри — толщина после обработки. Толщины в миллиметрах.
 Dielectrics are listed top to bottom: **P** prepreg (glass style and Er), **C** core. Inner copper is the finished thickness. Thicknesses in millimetres.
 
-**2 слоя / 2 layers:** одно ядро FR-4 толщиной «плата − 2 × медь» (0.4–2.0 мм, медь 1 или 2 oz). / a single FR-4 core of «board − 2 × copper» (0.4–2.0 mm, 1 or 2 oz copper).
+**2 layers:** a single FR-4 core of «board − 2 × copper» (0.4–2.0 mm, 1 or 2 oz copper).
 
-Значения — из калькулятора импеданса JLCPCB, проверены 2026-10-09. Если нужной комбинации нет, настройщик берёт ближайшую и пишет об этом.
 Values come from the JLCPCB impedance calculator, checked 2026-10-09. If a combination is missing, the setup takes the nearest one and says so.
 
-## 4 слоя / 4 layers
+## 4 layers
 
-| Толщина / Thickness | Медь снаружи / Outer | Медь внутри / Inner | Диэлектрики / Dielectrics | Итого / Total |
+| Thickness | Outer copper | Inner copper | Dielectrics | Total |
 |---|---|---|---|---|
 | 0.8 | 1 oz · 0.035 | 0.5 oz · 0.0152 | P 7628 0.2104 Er 4.40 · C 0.25 · P 7628 0.2104 Er 4.40 | 0.771 |
 | 0.8 | 1 oz · 0.035 | 1 oz · 0.03 | P 7628 0.203 Er 4.40 · C 0.25 · P 7628 0.203 Er 4.40 | 0.786 |
@@ -46,9 +43,9 @@ Values come from the JLCPCB impedance calculator, checked 2026-10-09. If a combi
 | 2.0 | 2 oz · 0.07 | 1 oz · 0.03 | P 7628 0.203 Er 4.40 · C 1.43 · P 7628 0.203 Er 4.40 | 2.036 |
 | 2.0 | 2 oz · 0.07 | 2 oz · 0.061 | P 3313+1080 0.1605 Er 4.10 · C 1.36 · P 1080+3313 0.1605 Er 4.10 | 1.943 |
 
-## 6 слоёв / 6 layers
+## 6 layers
 
-| Толщина / Thickness | Медь снаружи / Outer | Медь внутри / Inner | Диэлектрики / Dielectrics | Итого / Total |
+| Thickness | Outer copper | Inner copper | Dielectrics | Total |
 |---|---|---|---|---|
 | 0.8 | 1 oz · 0.035 | 0.5 oz · 0.0152 | P 2116 0.1164 Er 4.16 · C 0.13 · P 7628 0.2104 Er 4.40 · C 0.13 · P 2116 0.1164 Er 4.16 | 0.834 |
 | 0.8 | 1 oz · 0.035 | 1 oz · 0.03 | P 3313 0.092 Er 4.10 · C 0.1 · P 2116+2116 0.218 Er 4.16 · C 0.1 · P 3313 0.092 Er 4.10 | 0.792 |
@@ -79,9 +76,9 @@ Values come from the JLCPCB impedance calculator, checked 2026-10-09. If a combi
 | 2.0 | 2 oz · 0.07 | 1 oz · 0.03 | P 7628 0.203 Er 4.40 · C 0.45 · P 7628+7628 0.406 Er 4.40 · C 0.45 · P 7628 0.203 Er 4.40 | 1.972 |
 | 2.0 | 2 oz · 0.07 | 2 oz · 0.061 | P 1080+1080 0.1375 Er 3.91 · C 0.55 · P 1080+2116+1080 0.231 Er 4.16 · C 0.55 · P 1080+1080 0.1375 Er 3.91 | 1.990 |
 
-## 8 слоёв / 8 layers
+## 8 layers
 
-| Толщина / Thickness | Медь снаружи / Outer | Медь внутри / Inner | Диэлектрики / Dielectrics | Итого / Total |
+| Thickness | Outer copper | Inner copper | Dielectrics | Total |
 |---|---|---|---|---|
 | 0.8 | 1 oz · 0.035 | 0.5 oz · 0.0152 | P 1080 0.0764 Er 3.91 · C 0.075 · P 2116 0.1164 Er 4.16 · C 0.075 · P 2116 0.1164 Er 4.16 · C 0.075 · P 1080 0.0764 Er 3.91 | 0.772 |
 | 0.8 | 2 oz · 0.07 | 0.5 oz · 0.0152 | P 1080 0.0764 Er 3.91 · C 0.075 · P 3313 0.0994 Er 4.10 · C 0.075 · P 3313 0.0994 Er 4.10 · C 0.075 · P 1080 0.0764 Er 3.91 | 0.808 |

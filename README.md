@@ -15,7 +15,11 @@
 </p>
 
 <p align="center">
-  <b>English</b> · <a href="README.ru.md">Русский</a> &nbsp;|&nbsp;
+  <b>English</b> · <a href="README.ru.md">Русский</a> · <a href="README.es.md">Español</a> · <a href="README.de.md">Deutsch</a> · <a href="README.pl.md">Polski</a>
+</p>
+
+<p align="center">
+  <a href="#installation">Installation</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#compatibility">Compatibility</a> ·
   <a href="#profiles">Profiles</a> ·
@@ -41,7 +45,7 @@
 | 🧱 | **77 JLCPCB stack-ups** (4, 6, 8 layers · 0.8–2.0 mm · 1–2 oz copper) — prepreg and core thicknesses exactly as ordered |
 | 🛟 | **Backup** of the previous rules before every run and one-button restore |
 | 🔎 | **Pre-flight check** for what DRC does not see: silkscreen size, non-plated holes, board size, copper outside the stack-up — with a list of what lies on the wrong layer |
-| 🌐 | The whole interface is in **English and Russian** |
+| 🌐 | **5 languages**: English, Russian, Spanish, German, Polish — pick one in the dialog; the rule files carry their description in all five |
 
 ---
 
@@ -60,20 +64,19 @@ Older or newer Fusion builds usually work too; if something breaks after a Fusio
 
 ## Installation
 
-1. [**Download `dmxON-JLC-Rules.zip`**](https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip) and unpack it anywhere, e.g. `Documents\dmxON-JLC-Rules`.
-2. Keep the layout: `dmxON_JLC_Setup.ulp` loads its modules from `lib\` next to it.
-3. Optional: add the folder to **Electronics → Preferences → Directories → ULPs**, then `RUN dmxON_JLC_Setup` is enough.
+1. [**Download `dmxON-JLC-Rules.zip`**](https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip) and unpack it anywhere.
+2. In Fusion Electronics: **Automation → Run ULP → `INSTALL.ulp`** from the unpacked folder, choose the language and press **Install**.
+3. **Restart Fusion.** `dmxON_JLC_Setup` now sits in the **Run ULP** list next to the built-in ULPs, and the rule pack appears in **DRC → Load…** and in the CAM Processor — Fusion's built-in files stay where they are.
+
+The installer copies the project to `Documents\dmxON\dmxON-JLC-Rules` and adds it to Fusion's ULP, design-rule and CAM directories through Fusion's own settings. Running `INSTALL.ulp` again updates the files; **Remove** gives Fusion its previous folders back. Manual alternative: keep the unpacked folder intact (`dmxON_JLC_Setup.ulp` loads its modules from `lib\` next to it) and run it with `RUN 'C:/path/dmxON_JLC_Setup.ulp'`.
 
 ---
 
 ## Quick start
 
 1. Open the **board** in Fusion Electronics.
-2. Run **Automation → Run ULP → `dmxON_JLC_Setup.ulp`**, or type in the command line:
-   ```
-   RUN 'C:/path/dmxON_JLC_Setup.ulp'
-   ```
-3. Check the layer count, profile and thickness — the preview shows every value, the stack-up and the board findings.
+2. Run **Automation → Run ULP → `dmxON_JLC_Setup`**.
+3. Pick the **language** in the top-right corner (English by default), check the layer count, profile and thickness — the preview shows every value, the stack-up and the board findings.
 4. Press **Apply**. A few seconds later the summary with the DRC result appears.
 5. **Save the board** (Ctrl+S) — the rules are stored in it, and Fusion exports Gerber from the saved version.
 
@@ -85,6 +88,7 @@ Best run it **before routing** (so routing follows JLCPCB rules from the start) 
 
 | Field | What it sets |
 |---|---|
+| **Language** (top right) | English, Русский, Español, Deutsch, Polski — the dialog switches at once; shared with dmxON FabKit |
 | **Copper layers** | 2, 4, 6 or 8. Default: what the board's stack-up and the copper on its layers say |
 | **Profile** | Standard, Dense, Extreme — see [Profiles](#profiles) |
 | **Thickness, mm** | 0.4–2.0. JLCPCB makes 4–8 layers at 0.8–2.0 mm; an unavailable choice falls back to the nearest with a note |
@@ -179,11 +183,11 @@ Before every run the board's current rules are saved to `%LOCALAPPDATA%\dmxon_jl
 ## Batch mode
 
 ```
-RUN dmxON_JLC_Setup.ulp -batch [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit]
+RUN dmxON_JLC_Setup.ulp -batch [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl]
 RUN dmxON_JLC_Setup.ulp -export <folder>
 ```
 
-`-vcut` copper 0.4 mm from the edge · `-open` untented vias · `-noclass` / `-noinstall` / `-nofabkit` skip classes / pack / FabKit · `-export` only writes the pack (12 `.dru` + 4 `.cam`), no board needed. Batch settings are not remembered.
+`-vcut` copper 0.4 mm from the edge · `-open` untented vias · `-noclass` / `-noinstall` / `-nofabkit` skip classes / pack / FabKit · `-lang` language of the summary · `-export` only writes the pack (12 `.dru` + 4 `.cam`), no board needed. Batch settings are not remembered.
 
 ---
 
@@ -208,6 +212,7 @@ Workflow: `dmxON_JLC_Setup` (rules, stack-up, DRC clean) → **save the board** 
 
 | Question | Answer |
 |---|---|
+| `dmxON_JLC_Setup` is not in the Run ULP list after installing | restart Fusion — it reads its folder list at start-up |
 | Wrong layer count detected | the setup reads the board's stack-up and the copper on its layers; pick the right number in the list |
 | «Layer N is outside the stack-up but holds: …» | the finding lists what is on that layer; move it off the layer or choose more layers |
 | «Drill Size» errors | in Standard and Dense, holes under 0.3 mm are errors because JLCPCB charges for them; enlarge them or choose Extreme |
@@ -225,7 +230,9 @@ Step 0 — `DRC SAVE` of the current rules (backup and the real stack-up) · ste
 ```
 dmxON-JLC-Rules/
 ├── dmxON_JLC_Setup.ulp     the board setup
-├── lib/                    jr_core (strings, files), jr_rules (values, .dru, .cam), jr_stack (77 stack-ups)
+├── INSTALL.ulp             adds the project to Fusion's ULP, rule and CAM folders
+├── lib/                    jr_core (strings, files, language), jr_lang (es/de/pl texts), jr_rules (values, .dru, .cam), jr_stack (77 stack-ups)
+├── lang/                   strings.tsv — all interface texts in five languages
 ├── rules/                  12 .dru + 4 .cam + README
 └── docs/                   ARCHITECTURE.md, STACKUPS.md, assets/
 ```
@@ -252,4 +259,4 @@ dmxON JLC Rules is **free**. It took many evenings of testing in Fusion, digging
 
 Free to use with attribution; copying the code, modification and commercial use are not permitted — see [LICENSE.md](LICENSE.md). JLCPCB is a trademark of its owner; this project is not affiliated with JLCPCB.
 
-**dmxON by AlexSmith 2026** · [dmxon512.com](https://dmxon512.com)
+**dmxON by AlexSmith 2026** · [dmxon512.com](https://dmxon512.com) · companion project: [dmxON FabKit](https://github.com/AlexSmith2025/dmxON-FabKit-Fusion-Electronics)

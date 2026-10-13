@@ -15,7 +15,11 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> · <b>Русский</b> &nbsp;|&nbsp;
+  <a href="README.md">English</a> · <b>Русский</b> · <a href="README.es.md">Español</a> · <a href="README.de.md">Deutsch</a> · <a href="README.pl.md">Polski</a>
+</p>
+
+<p align="center">
+  <a href="#установка">Установка</a> ·
   <a href="#быстрый-старт">Быстрый старт</a> ·
   <a href="#совместимость">Совместимость</a> ·
   <a href="#профили">Профили</a> ·
@@ -41,7 +45,7 @@
 | 🧱 | **77 стеков JLCPCB** (4, 6, 8 слоёв · 0.8–2.0 мм · медь 1–2 oz) — толщины препрегов и ядер как в заказе |
 | 🛟 | **Резервная копия** прежних правил перед каждым запуском и возврат одной кнопкой |
 | 🔎 | **Предварительная проверка** того, что не видит DRC: шелкография, неметаллизированные отверстия, размер платы, медь вне стека — с перечнем, что лежит на лишнем слое |
-| 🌐 | Весь интерфейс — **на русском и английском** |
+| 🌐 | **5 языков**: английский, русский, испанский, немецкий, польский — выбирается в диалоге; описание в файлах правил — на всех пяти |
 
 ---
 
@@ -60,20 +64,19 @@
 
 ## Установка
 
-1. [**Скачайте `dmxON-JLC-Rules.zip`**](https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip) и распакуйте в любую папку, например `Документы\dmxON-JLC-Rules`.
-2. Структуру не меняйте: `dmxON_JLC_Setup.ulp` ищет модули в `lib\` рядом с собой.
-3. По желанию добавьте папку в **Electronics → Preferences → Directories → ULPs** — тогда хватит `RUN dmxON_JLC_Setup`.
+1. [**Скачайте `dmxON-JLC-Rules.zip`**](https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip) и распакуйте куда угодно.
+2. В Fusion Electronics: **Automation → Run ULP → `INSTALL.ulp`** из распакованной папки, выберите язык и нажмите **Установить**.
+3. **Перезапустите Fusion.** `dmxON_JLC_Setup` появится в списке **Run ULP** рядом со встроенными, а пакет правил — в **DRC → Load…** и в CAM Processor; встроенные файлы Fusion остаются на месте.
+
+Установщик копирует проект в `Документы\dmxON\dmxON-JLC-Rules` и добавляет его в папки ULP, правил и CAM через собственные настройки Fusion. Повторный запуск `INSTALL.ulp` обновляет файлы; **Удалить** возвращает Fusion прежние папки. Вручную: держите распакованную папку целиком (`dmxON_JLC_Setup.ulp` ищет модули в `lib\` рядом с собой) и запускайте `RUN 'C:/путь/dmxON_JLC_Setup.ulp'`.
 
 ---
 
 ## Быстрый старт
 
 1. Откройте **плату** в Fusion Electronics.
-2. Запустите **Automation → Run ULP → `dmxON_JLC_Setup.ulp`** или в командной строке:
-   ```
-   RUN 'C:/путь/dmxON_JLC_Setup.ulp'
-   ```
-3. Проверьте число слоёв, профиль и толщину — в предпросмотре видны все значения, стек и замечания по плате.
+2. Запустите **Automation → Run ULP → `dmxON_JLC_Setup`**.
+3. В правом верхнем углу выберите **язык** (по умолчанию английский), проверьте число слоёв, профиль и толщину — в предпросмотре видны все значения, стек и замечания по плате.
 4. Нажмите **Настроить**. Через несколько секунд появится итог с результатом DRC.
 5. **Сохраните плату** (Ctrl+S) — правила хранятся в ней, а Gerber Fusion делает из сохранённой версии.
 
@@ -85,6 +88,7 @@
 
 | Поле | Что задаёт |
 |---|---|
+| **Язык** (справа сверху) | English, Русский, Español, Deutsch, Polski — диалог переключается сразу; выбор общий с dmxON FabKit |
 | **Слоёв меди** | 2, 4, 6 или 8. По умолчанию — по стеку платы и меди на слоях |
 | **Профиль** | Стандарт, Плотный, Предельный — см. [Профили](#профили) |
 | **Толщина, мм** | 0.4–2.0. Для 4–8 слоёв JLCPCB делает 0.8–2.0 мм; если выбрано то, чего нет, берётся ближайшее с замечанием |
@@ -179,11 +183,11 @@
 ## Пакетный режим
 
 ```
-RUN dmxON_JLC_Setup.ulp -batch [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit]
+RUN dmxON_JLC_Setup.ulp -batch [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl]
 RUN dmxON_JLC_Setup.ulp -export <папка>
 ```
 
-`-vcut` медь от края 0.4 мм · `-open` переходные без маски · `-noclass` / `-noinstall` / `-nofabkit` не трогать классы / не ставить пакет / не передавать в FabKit · `-export` только записать пакет (12 `.dru` + 4 `.cam`), плата не нужна. Настройки пакетного режима не запоминаются.
+`-vcut` медь от края 0.4 мм · `-open` переходные без маски · `-noclass` / `-noinstall` / `-nofabkit` не трогать классы / не ставить пакет / не передавать в FabKit · `-lang` язык итога · `-export` только записать пакет (12 `.dru` + 4 `.cam`), плата не нужна. Настройки пакетного режима не запоминаются.
 
 ---
 
@@ -208,6 +212,7 @@ RUN dmxON_JLC_Setup.ulp -export <папка>
 
 | Вопрос | Ответ |
 |---|---|
+| После установки `dmxON_JLC_Setup` нет в списке Run ULP | перезапустите Fusion — список папок он читает при старте |
 | Определилось не то число слоёв | настройщик читает стек платы и медь на слоях; выберите нужное число в списке |
 | «Слой N не входит в стек, а на нём: …» | в замечании перечислено, что лежит на слое; уберите это или выберите больше слоёв |
 | Ошибки «Drill Size» (сверло меньше минимума) | в Стандарте и Плотном отверстия меньше 0.3 мм — ошибка, у JLCPCB они платные; увеличьте сверло или выберите Предельный |
@@ -221,6 +226,16 @@ RUN dmxON_JLC_Setup.ulp -export <папка>
 ## Как устроено
 
 Шаг 0 — `DRC SAVE` текущих правил (копия и настоящий стек) · шаг 1 — разбор платы, диалог, проверка, файл правил · шаг 2 — `DRC LOAD`, `CLASS`, `RATSNEST`, `DRC` · шаг 3 — итог DRC. Подробно: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · история версий: [CHANGELOG.md](CHANGELOG.md).
+
+```
+dmxON-JLC-Rules/
+├── dmxON_JLC_Setup.ulp     настройщик платы
+├── INSTALL.ulp             добавляет проект в папки ULP, правил и CAM Fusion
+├── lib/                    jr_core (строки, файлы, язык), jr_lang (тексты es/de/pl), jr_rules (значения, .dru, .cam), jr_stack (77 стеков)
+├── lang/                   strings.tsv — все тексты интерфейса на пяти языках
+├── rules/                  12 .dru + 4 .cam + README
+└── docs/                   ARCHITECTURE.md, STACKUPS.md, assets/
+```
 
 Источники: [возможности JLCPCB](https://jlcpcb.com/capabilities/pcb-capabilities) · [доплаты](https://jlcpcb.com/help/article/In-what-cases-will-there-be-charged-extra) · [калькулятор импеданса и стеки](https://jlcpcb.com/impedance). Значения проверены 2026-10-09; JLCPCB иногда меняет возможности — перед заказом сверяйтесь с их страницей и отчётом DFM.
 
@@ -244,4 +259,4 @@ dmxON JLC Rules — **бесплатный**. За ним много вечер�
 
 Бесплатно с указанием автора; копирование кода, изменение и коммерческое использование запрещены — см. [LICENSE.md](LICENSE.md). JLCPCB — товарный знак его владельца; проект с JLCPCB не связан.
 
-**dmxON by AlexSmith 2026** · [dmxon512.com](https://dmxon512.com)
+**dmxON by AlexSmith 2026** · [dmxon512.com](https://dmxon512.com) · соседний проект: [dmxON FabKit](https://github.com/AlexSmith2025/dmxON-FabKit-Fusion-Electronics)
