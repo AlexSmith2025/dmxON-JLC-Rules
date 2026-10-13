@@ -4,13 +4,13 @@
 // ---------------------------------------------------------------- продукт
 
 string JR_NAME    = "dmxON JLC Rules";
-string JR_VERSION = "1.0.2";              // при каждой переделке поднимать (см. CHANGELOG.md)
+string JR_VERSION = "1.0.3";              // при каждой переделке поднимать (см. CHANGELOG.md)
 string JR_DATE    = "2026-10-13";
 string JR_AUTHOR  = "dmxON by AlexSmith";
 string JR_YEAR    = "2026";
 string JR_ID      = "dmxon_jlc";          // префикс настроек в eaglerc
 string FABKIT_ID  = "dmxon_fabkit";       // настройки dmxON FabKit (толщина и маска для заказа)
-string JR_REPO    = "https://github.com/AlexSmith2025/dmxON-JLC-Rules";
+string JR_REPO    = "https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics";
 string JR_DONATE  = "https://www.paypal.com/donate/?business=smith.show2025%40gmail.com&no_recurring=0&item_name=dmxON+JLC+Rules&currency_code=EUR";
 
 string jr_title()

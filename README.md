@@ -3,15 +3,15 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules/releases/latest"><img src="https://img.shields.io/github/v/release/AlexSmith2025/dmxON-JLC-Rules?style=for-the-badge&color=b4744a&label=release" alt="Latest release"></a>
-  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules/releases"><img src="https://img.shields.io/github/downloads/AlexSmith2025/dmxON-JLC-Rules/total?style=for-the-badge&color=24574a&label=downloads" alt="Downloads"></a>
+  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest"><img src="https://img.shields.io/github/v/release/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics?style=for-the-badge&color=b4744a&label=release" alt="Latest release"></a>
+  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases"><img src="https://img.shields.io/github/downloads/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/total?style=for-the-badge&color=24574a&label=downloads" alt="Downloads"></a>
   <img src="https://img.shields.io/badge/Autodesk%20Fusion-Electronics-e2ab7f?style=for-the-badge&logo=autodesk&logoColor=white" alt="Autodesk Fusion Electronics">
   <img src="https://img.shields.io/badge/Windows-10%20%7C%2011-3b4a5a?style=for-the-badge" alt="Windows 10 | 11">
   <a href="https://www.paypal.com/donate/?business=smith.show2025%40gmail.com&no_recurring=0&item_name=dmxON+JLC+Rules&currency_code=EUR"><img src="https://img.shields.io/badge/PayPal-Donate-003087?style=for-the-badge&logo=paypal&logoColor=white" alt="Donate with PayPal"></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules/releases/latest/download/dmxON-JLC-Rules.zip"><img src="https://img.shields.io/badge/%E2%AC%87%20Download-dmxON--JLC--Rules.zip-b4744a?style=for-the-badge" alt="Download the latest version"></a>
+  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip"><img src="https://img.shields.io/badge/%E2%AC%87%20Download-dmxON--JLC--Rules.zip-b4744a?style=for-the-badge" alt="Download the latest version"></a>
 </p>
 
 <p align="center">
@@ -54,13 +54,13 @@
 | EAGLE 9.x | ❌ needs Fusion's `polyPours`/`polyShapes` ULP loops | ✅ EAGLE 9 format | ✅ EAGLE 8.6–9.6 job format |
 | KiCad, Altium, EasyEDA | ❌ | ❌ different rule format | ❌ |
 
-Older or newer Fusion builds usually work too; if something breaks after a Fusion update, please [open an issue](https://github.com/AlexSmith2025/dmxON-JLC-Rules/issues). No internet connection and no extra software are needed.
+Older or newer Fusion builds usually work too; if something breaks after a Fusion update, please [open an issue](https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/issues). No internet connection and no extra software are needed.
 
 ---
 
 ## Installation
 
-1. [**Download `dmxON-JLC-Rules.zip`**](https://github.com/AlexSmith2025/dmxON-JLC-Rules/releases/latest/download/dmxON-JLC-Rules.zip) and unpack it anywhere, e.g. `Documents\dmxON-JLC-Rules`.
+1. [**Download `dmxON-JLC-Rules.zip`**](https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip) and unpack it anywhere, e.g. `Documents\dmxON-JLC-Rules`.
 2. Keep the layout: `dmxON_JLC_Setup.ulp` loads its modules from `lib\` next to it.
 3. Optional: add the folder to **Electronics → Preferences → Directories → ULPs**, then `RUN dmxON_JLC_Setup` is enough.
 
@@ -95,7 +95,7 @@ Best run it **before routing** (so routing follows JLCPCB rules from the start) 
 | **V-cut panel** | copper at least 0.4 mm from the board edge |
 | **Net classes not below the minimum** | raises classes whose width, clearance or drill is below the profile; class 0 gets the minimum as the routing default |
 | **Rule pack and CAM into Documents/EAGLE** | all 12 rule files, the file for your board and the CAM job go to `Documents\EAGLE\design rules` and `\cam`; nothing is written into the Fusion program folder |
-| **Thickness and mask to dmxON FabKit** | [dmxON FabKit](https://github.com/AlexSmith2025/dmxON-FabKit) takes these values for the order |
+| **Thickness and mask to dmxON FabKit** | [dmxON FabKit](https://github.com/AlexSmith2025/dmxON-FabKit-Fusion-Electronics) takes these values for the order |
 
 Buttons: **Apply** · **Files only…** (write `.dru` and `.cam` for the chosen settings into any folder, the board is not touched) · **Restore previous rules** (after a previous setup) · **Cancel**.
 
@@ -197,7 +197,7 @@ The rule files assume 1.6 mm, 1 oz / 0.5 oz, tented vias and regular routing; fo
 
 ## Together with dmxON FabKit
 
-[**dmxON FabKit**](https://github.com/AlexSmith2025/dmxON-FabKit) turns the board into a complete JLCPCB order: Gerber zip, BOM and CPL with LCSC parts, a report, A4 assembly documentation and toner-transfer sheets.
+[**dmxON FabKit**](https://github.com/AlexSmith2025/dmxON-FabKit-Fusion-Electronics) turns the board into a complete JLCPCB order: Gerber zip, BOM and CPL with LCSC parts, a report, A4 assembly documentation and toner-transfer sheets.
 Workflow: `dmxON_JLC_Setup` (rules, stack-up, DRC clean) → **save the board** (Ctrl+S) → `dmxON_FabKit` (order package; thickness and mask colour already filled in).
 
 > **Save the board after the setup.** Fusion exports Gerber from the last *saved* version; without saving, the new rules (rings, vias, mask) do not reach the Gerber files.

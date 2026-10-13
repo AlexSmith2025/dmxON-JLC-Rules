@@ -84,8 +84,8 @@ Fusion: **DRC → Load…** (or the `DRC LOAD 'path/file.dru'` command), then **
 **Задание CAM / CAM job.** **Manufacturing → CAM Processor → Load job file** → `dmxON_JLCPCB_<N>L.cam` → **Process Job**. Номера внутренних слоёв в задании — как в стеке выше (6 слоёв: 2, 3, 14, 15). Если у платы другие номера, настройщик запишет задание под них.
 Inner layer numbers in the job follow the stack above (6 layers: 2, 3, 14, 15). If the board uses other numbers, the setup writes a job for them.
 
-> [**dmxON FabKit**](https://github.com/AlexSmith2025/dmxON-FabKit) делает Gerber сам (с именами JLCPCB и архивом) — задание CAM нужно, только если вы выгружаете вручную.
-> [**dmxON FabKit**](https://github.com/AlexSmith2025/dmxON-FabKit) produces Gerber itself (JLCPCB names and zip) — the CAM job is only needed for manual export.
+> [**dmxON FabKit**](https://github.com/AlexSmith2025/dmxON-FabKit-Fusion-Electronics) делает Gerber сам (с именами JLCPCB и архивом) — задание CAM нужно, только если вы выгружаете вручную.
+> [**dmxON FabKit**](https://github.com/AlexSmith2025/dmxON-FabKit-Fusion-Electronics) produces Gerber itself (JLCPCB names and zip) — the CAM job is only needed for manual export.
 
 ---
 

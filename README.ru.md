@@ -3,15 +3,15 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules/releases/latest"><img src="https://img.shields.io/github/v/release/AlexSmith2025/dmxON-JLC-Rules?style=for-the-badge&color=b4744a&label=release" alt="Последняя версия"></a>
-  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules/releases"><img src="https://img.shields.io/github/downloads/AlexSmith2025/dmxON-JLC-Rules/total?style=for-the-badge&color=24574a&label=downloads" alt="Скачиваний"></a>
+  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest"><img src="https://img.shields.io/github/v/release/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics?style=for-the-badge&color=b4744a&label=release" alt="Последняя версия"></a>
+  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases"><img src="https://img.shields.io/github/downloads/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/total?style=for-the-badge&color=24574a&label=downloads" alt="Скачиваний"></a>
   <img src="https://img.shields.io/badge/Autodesk%20Fusion-Electronics-e2ab7f?style=for-the-badge&logo=autodesk&logoColor=white" alt="Autodesk Fusion Electronics">
   <img src="https://img.shields.io/badge/Windows-10%20%7C%2011-3b4a5a?style=for-the-badge" alt="Windows 10 | 11">
   <a href="https://www.paypal.com/donate/?business=smith.show2025%40gmail.com&no_recurring=0&item_name=dmxON+JLC+Rules&currency_code=EUR"><img src="https://img.shields.io/badge/PayPal-%D0%BF%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%B0%D1%82%D1%8C-003087?style=for-the-badge&logo=paypal&logoColor=white" alt="Поддержать через PayPal"></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules/releases/latest/download/dmxON-JLC-Rules.zip"><img src="https://img.shields.io/badge/%E2%AC%87%20%D0%A1%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C-dmxON--JLC--Rules.zip-b4744a?style=for-the-badge" alt="Скачать последнюю версию"></a>
+  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip"><img src="https://img.shields.io/badge/%E2%AC%87%20%D0%A1%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C-dmxON--JLC--Rules.zip-b4744a?style=for-the-badge" alt="Скачать последнюю версию"></a>
 </p>
 
 <p align="center">
@@ -54,13 +54,13 @@
 | EAGLE 9.x | ❌ нужны циклы Fusion `polyPours`/`polyShapes` | ✅ формат EAGLE 9 | ✅ формат заданий EAGLE 8.6–9.6 |
 | KiCad, Altium, EasyEDA | ❌ | ❌ другой формат правил | ❌ |
 
-Другие сборки Fusion обычно тоже работают; если после обновления Fusion что-то сломалось — [напишите в issues](https://github.com/AlexSmith2025/dmxON-JLC-Rules/issues). Интернет и дополнительные программы не нужны.
+Другие сборки Fusion обычно тоже работают; если после обновления Fusion что-то сломалось — [напишите в issues](https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/issues). Интернет и дополнительные программы не нужны.
 
 ---
 
 ## Установка
 
-1. [**Скачайте `dmxON-JLC-Rules.zip`**](https://github.com/AlexSmith2025/dmxON-JLC-Rules/releases/latest/download/dmxON-JLC-Rules.zip) и распакуйте в любую папку, например `Документы\dmxON-JLC-Rules`.
+1. [**Скачайте `dmxON-JLC-Rules.zip`**](https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip) и распакуйте в любую папку, например `Документы\dmxON-JLC-Rules`.
 2. Структуру не меняйте: `dmxON_JLC_Setup.ulp` ищет модули в `lib\` рядом с собой.
 3. По желанию добавьте папку в **Electronics → Preferences → Directories → ULPs** — тогда хватит `RUN dmxON_JLC_Setup`.
 
@@ -95,7 +95,7 @@
 | **Панель V-cut** | медь не ближе 0.4 мм к краю |
 | **Классы цепей не ниже минимума** | классы, у которых ширина, зазор или сверло меньше профиля, поднимаются; класс 0 получает минимум как значение для разводки |
 | **Пакет правил и CAM — в Документы/EAGLE** | все 12 файлов правил, файл под плату и задание CAM — в `Documents\EAGLE\design rules` и `\cam`; в папку программы Fusion ничего не пишется |
-| **Толщину и маску — в dmxON FabKit** | [dmxON FabKit](https://github.com/AlexSmith2025/dmxON-FabKit) возьмёт эти значения для заказа |
+| **Толщину и маску — в dmxON FabKit** | [dmxON FabKit](https://github.com/AlexSmith2025/dmxON-FabKit-Fusion-Electronics) возьмёт эти значения для заказа |
 
 Кнопки: **Настроить** · **Только файлы…** (`.dru` и `.cam` под выбранные параметры в любую папку, плата не меняется) · **Вернуть прежние правила** (если плата уже настраивалась) · **Отмена**.
 
@@ -197,7 +197,7 @@ RUN dmxON_JLC_Setup.ulp -export <папка>
 
 ## Вместе с dmxON FabKit
 
-[**dmxON FabKit**](https://github.com/AlexSmith2025/dmxON-FabKit) делает из платы полный заказ JLCPCB: архив Gerber, BOM и CPL с деталями LCSC, отчёт, документацию A4 и листы ЛУТ.
+[**dmxON FabKit**](https://github.com/AlexSmith2025/dmxON-FabKit-Fusion-Electronics) делает из платы полный заказ JLCPCB: архив Gerber, BOM и CPL с деталями LCSC, отчёт, документацию A4 и листы ЛУТ.
 Порядок: `dmxON_JLC_Setup` (правила, стек, DRC без ошибок) → **сохранить плату** (Ctrl+S) → `dmxON_FabKit` (пакет заказа; толщина и цвет маски уже подставлены).
 
 > **Сохраните плату после настройки.** Gerber Fusion делает из последней *сохранённой* версии; без сохранения новые правила (пояски, переходные, маска) в Gerber не попадут.

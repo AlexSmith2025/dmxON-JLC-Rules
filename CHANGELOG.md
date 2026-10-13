@@ -8,6 +8,15 @@ New feature → MINOR, fix → PATCH.
 
 ---
 
+## 1.0.3 — 2026-10-13
+
+**Изменено / Changed**
+
+- Репозиторий переименован в **dmxON-JLC-Rules-Fusion-Electronics** — так его проще найти по запросу «Fusion Electronics». Ссылки в программе и документации обновлены; старые адреса GitHub перенаправляет сам.
+  The repository is renamed to **dmxON-JLC-Rules-Fusion-Electronics** so it is easier to find when searching for «Fusion Electronics». Links in the program and docs are updated; GitHub redirects the old addresses.
+
+---
+
 ## 1.0.2 — 2026-10-13
 
 **Изменено / Changed**
