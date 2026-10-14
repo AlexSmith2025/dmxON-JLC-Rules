@@ -5,6 +5,24 @@ Numbering: `MAJOR.MINOR.PATCH` — new feature → MINOR, fix → PATCH.
 
 ---
 
+## 1.3.0 — 2026-10-14
+
+**New**
+
+- **Dot grid with the rules** — option «Dot grid: board 1 / 0.1 mm, schematic 0.1″», on by default (`-nogrid` in batch mode): the board gets a 1 mm dot grid with 0.1 mm as the alternate grid (Alt), the schematic a 0.1″ dot grid with 0.025″ as the alternate. The schematic is switched by the dmxON add-in; without it the summary shows the command to run there. `GRID LAST` brings back the previous grid.
+
+**Fixed**
+
+- **Works on every computer of the account.** Fusion shares its preferences and the ULP settings across all computers of an Autodesk account, so paths saved on one computer (`C:\Users\<name>\…`, `webdeploy\production\<build>`) reached the others, and the ULPs and rules were not found there. The dmxON add-in 1.1.0 writes the folders as `$HOME\dmxON\…` and `$EAGLEDIR\…`, which Fusion expands on each computer to its own Documents and program folder, and converts the paths of other computers it finds; the ULPs take the user folder only from paths that exist on this computer. The rule pack goes only into a folder of this computer. Run `INSTALL.ulp` (or **dmxON → Updates**) once on each computer.
+- The summary uses the language given with `-lang` (it used the saved language).
+
+**Changed**
+
+- «Rule pack and CAM into the rules folder» (was «… into Documents/EAGLE»): the pack goes to the first design-rules / CAM folder of Fusion on this computer — `Documents\dmxON\dmxON-JLC-Rules\rules` after installing.
+- dmxON add-in 1.1.0; rule pack rebuilt for 1.3.0.
+
+---
+
 ## 1.2.0 — 2026-10-13
 
 **New**

@@ -48,6 +48,7 @@
 | 🌐 | **5 języków**: angielski, rosyjski, hiszpański, niemiecki, polski — wybór w oknie; pliki reguł mają opis we wszystkich pięciu |
 | 📐 | **ISO lub GOST**: wybór normy obok języka, wspólny z dmxON FabKit; podgląd i podsumowanie podają IPC-2221C / IPC-6012F klasa 2 / IPC-A-600M albo **klasę dokładności wg GOST R 53429-2009** dla Twojej ścieżki i odstępu |
 | 🧩 | **Karta dmxON w Fusion** (dodatek): JLC Rules, FabKit, kopia całego folderu projektu i aktualizacje z GitHuba jednym kliknięciem; pakiet reguł i zadania CAM są na listach Fusion |
+| ▦ | **Siatka punktowa** razem z regułami: płytka 1 mm (alternatywna 0,1 mm, Alt), schemat 0,1″ (alternatywna 0,025″) |
 
 ---
 
@@ -71,6 +72,8 @@ Starsze i nowsze wersje Fusion zwykle też działają; jeśli coś przestanie dz
 3. **Uruchom ponownie Fusion jeden raz.** Edytory płytki i schematu dostaną kartę **dmxON**, `dmxON_JLC_Setup` będzie w **Run ULP**, pakiet reguł w **DRC → Load…**, a zadania CAM na liście CAM.
 
 Instalator kopiuje projekt do `Dokumenty\dmxON\dmxON-JLC-Rules` i instaluje **dodatek dmxON** (`%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\dmxON`), który stawia foldery dmxON na początku list ULP, reguł i CAM w Fusion (Preferences → General → Electronics → Directory) i naprawia je po aktualizacjach; wbudowane foldery pozostają. Ponowne uruchomienie `INSTALL.ulp` aktualizuje pliki; **Usuń** kasuje skopiowany projekt, a z ostatnim narzędziem dmxON także dodatek. Bez ponownego uruchomienia: **Utilities → Add-Ins → Scripts and Add-Ins → dmxON → Run**.
+
+**Kilka komputerów.** Fusion współdzieli ustawienia między wszystkimi komputerami konta Autodesk. Dlatego dodatek zapisuje foldery jako `$HOME\dmxON\…` i `$EAGLEDIR\…` — Fusion rozwija je na każdym komputerze do jego własnych Dokumentów i folderu programu — i listy są poprawne wszędzie. Uruchom `INSTALL.ulp` raz na każdym komputerze (albo **dmxON → Aktualizacje** tam, gdzie karta już jest), aby pliki tam były.
 
 ---
 
@@ -101,8 +104,9 @@ Najlepiej uruchomić **przed trasowaniem** (wtedy ścieżki od początku idą wg
 | **Przelotki pod maską** | przelotki o otworze do 0.5 mm są przykryte maską (jak «Tented» na stronie zamówienia) |
 | **Panel V-cut** | miedź co najmniej 0.4 mm od krawędzi płytki |
 | **Klasy sieci nie poniżej minimum** | podnosi klasy, których szerokość, odstęp lub wiercenie są poniżej profilu; klasa 0 dostaje minimum jako domyślną wartość trasowania |
-| **Pakiet reguł i CAM do Dokumenty/EAGLE** | wszystkie 12 plików reguł, plik dla Twojej płytki i zadanie CAM trafiają do `Dokumenty\EAGLE\design rules` i `\cam`; nic nie jest zapisywane w folderze programu Fusion |
+| **Pakiet reguł i CAM do folderu reguł** | wszystkie 12 plików reguł, plik dla Twojej płytki i zadanie CAM trafiają do pierwszego folderu reguł / CAM w Fusion na tym komputerze: po instalacji `Dokumenty\dmxON\dmxON-JLC-Rules\rules` (bez instalatora `Dokumenty\EAGLE\design rules` i `\cam`); nic nie jest zapisywane w folderze programu Fusion |
 | **Grubość i maska do dmxON FabKit** | [dmxON FabKit](https://github.com/AlexSmith2025/dmxON-FabKit-Fusion-Electronics) bierze te wartości do zamówienia |
+| **Siatka punktowa: płytka 1 / 0,1 mm, schemat 0,1″** | płytka: siatka punktowa 1 mm z 0,1 mm jako siatką alternatywną (z Alt); schemat: siatka punktowa 0,1″ (alternatywna 0,025″). Schemat przełącza dodatek dmxON; bez niego podsumowanie pokazuje polecenie dla schematu. `GRID LAST` przywraca poprzednią siatkę |
 
 Przyciski: **Zastosuj** · **Tylko pliki…** (zapisuje `.dru` i `.cam` dla wybranych ustawień w dowolnym folderze, płytka pozostaje nietknięta) · **Przywróć poprzednie reguły** (po wcześniejszej konfiguracji) · **Anuluj**.
 
@@ -186,11 +190,11 @@ Przed każdym uruchomieniem bieżące reguły płytki są zapisywane w `%LOCALAP
 ## Tryb wsadowy
 
 ```
-RUN dmxON_JLC_Setup.ulp -batch [-std iso|gost] [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl]
+RUN dmxON_JLC_Setup.ulp -batch [-std iso|gost] [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-nogrid] [-lang en|ru|es|de|pl]
 RUN dmxON_JLC_Setup.ulp -export <folder>
 ```
 
-`-vcut` miedź 0.4 mm od krawędzi · `-open` przelotki bez maski · `-noclass` / `-noinstall` / `-nofabkit` pomiń klasy / pakiet / FabKit · `-lang` język podsumowania · `-export` tylko zapisuje pakiet (12 `.dru` + 4 `.cam`), płytka niepotrzebna. Ustawienia trybu wsadowego nie są zapamiętywane. · `-std iso|gost` norma
+`-vcut` miedź 0.4 mm od krawędzi · `-open` przelotki bez maski · `-noclass` / `-noinstall` / `-nofabkit` pomiń klasy / pakiet / FabKit · `-lang` język podsumowania · `-export` tylko zapisuje pakiet (12 `.dru` + 4 `.cam`), płytka niepotrzebna. Ustawienia trybu wsadowego nie są zapamiętywane. · `-std iso|gost` norma · `-nogrid` nie zmieniaj siatki
 
 ---
 
@@ -217,13 +221,14 @@ Kolejność: `dmxON_JLC_Setup` (reguły, stos, DRC bez błędów) → **zapisz p
 |---|---|
 | Po instalacji brak karty **dmxON** | uruchom ponownie Fusion jeden raz albo włącz dodatek: **Utilities → Add-Ins → Scripts and Add-Ins → dmxON → Run** |
 | Jak zaktualizować? | **dmxON → Aktualizacje** sprawdza GitHub i instaluje nowe wersje; dodatek sprawdza też sam raz dziennie |
+| Na innym komputerze nie ma reguł ani ULP, ścieżki prowadzą do pierwszego komputera | Fusion współdzieli ustawienia w całym koncie Autodesk. Zaktualizuj do JLC Rules 1.3.0 / FabKit 2.2.1 (dodatek 1.1.0) i raz uruchom `INSTALL.ulp` na tym komputerze: foldery są wtedy zapisane jako `$HOME\dmxON\…` i działają na każdym komputerze |
 | Rozpoznano złą liczbę warstw | konfigurator czyta stos płytki i miedź na jej warstwach; wybierz właściwą liczbę z listy |
 | «Warstwa N jest poza stosem, a zawiera: …» | uwaga wymienia, co leży na tej warstwie; usuń to z niej lub wybierz więcej warstw |
 | Błędy «Drill Size» | w profilach Standard i Gęsty otwory poniżej 0.3 mm są błędem, bo JLCPCB dolicza za nie opłatę; powiększ je lub wybierz Ekstremalny |
 | Błędy «Drill Clearance» | otwory bliżej niż odstęp otworów w profilu (0.25 / 0.20 mm) |
 | Wiele błędów «miedź przy krawędzi» | Standard trzyma 0.3 mm (V-cut 0.4 mm); dla gęstej płytki użyj profilu Gęsty (0.25) lub Ekstremalny (0.2) |
 | Pierścienie padów urosły | reguły ustawiają minimalny pierścień JLCPCB; większy pad z biblioteki pozostaje bez zmian |
-| Gdzie są pliki? | reguły płytki i kopie — `%LOCALAPPDATA%\dmxon_jlc`; pakiet — `Dokumenty\EAGLE\design rules` i `\cam` |
+| Gdzie są pliki? | reguły płytki i kopie — `%LOCALAPPDATA%\dmxon_jlc`; pakiet — `Dokumenty\dmxON\dmxON-JLC-Rules\rules` (bez instalatora `Dokumenty\EAGLE\design rules` i `\cam`) |
 
 ---
 

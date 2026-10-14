@@ -4,8 +4,8 @@
 // ---------------------------------------------------------------- продукт
 
 string JR_NAME    = "dmxON JLC Rules";
-string JR_VERSION = "1.2.0";              // при каждой переделке поднимать (см. CHANGELOG.md)
-string JR_DATE    = "2026-10-13";
+string JR_VERSION = "1.3.0";              // при каждой переделке поднимать (см. CHANGELOG.md)
+string JR_DATE    = "2026-10-14";
 string JR_AUTHOR  = "dmxON by AlexSmith";
 string JR_YEAR    = "2026";
 string JR_ID      = "dmxon_jlc";          // префикс настроек в eaglerc

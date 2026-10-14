@@ -3,7 +3,7 @@
        "net classes, a pre-flight check, DRC and a summary. The previous rules are backed up and can be restored.<p>"
        "<b>Usage:</b> <tt>RUN dmxON_JLC_Setup</tt> in the board editor<br>"
        "Batch: <tt>RUN dmxON_JLC_Setup -batch [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] "
-       "[-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl] [-std iso|gost]</tt><br>"
+       "[-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-nogrid] [-lang en|ru|es|de|pl] [-std iso|gost]</tt><br>"
        "Rule pack only: <tt>RUN dmxON_JLC_Setup -export &lt;folder&gt;</tt><p>"
        "<author>dmxON by AlexSmith 2026 · free to use with attribution · LICENSE.md</author>",
        "ru: <b>dmxON JLC Rules</b> — правила JLCPCB и настройка платы одной командой<p>"
@@ -40,6 +40,7 @@
 
 #include "lib/jr_lang.ulp"
 #include "lib/jr_core.ulp"
+#include "lib/jr_addin.ulp"
 #include "lib/jr_stack.ulp"
 #include "lib/jr_rules.ulp"
 
@@ -98,7 +99,7 @@ void js_items()
 
 if (argc > 2 && argv[1] == "-export") {
     string dir = js_dir(argv[2]);
-    js_home = home_from(argv[0]);
+    js_home = local_home();
     if (js_home != "") runner_init(js_home + "/AppData/Local/Temp");
     shell("mkdir " + qp(dir) + " 2>nul");
     int n_ok = jr_write_pack(dir, dir);
@@ -631,6 +632,7 @@ string js_refresh()
 string js_summary(string stfile)
 {
     st_load(stfile);
+    if (st_get("lang") != "") ui_lang = st_geti("lang");   // язык второй фазы (в т. ч. из -lang)
     string ed[];
     int ec[];
     int ne = 0, n_act = 0, n_ok = 0, checked = 0, n_warn = 0, n_drill = 0;
@@ -656,6 +658,7 @@ string js_summary(string stfile)
     if (st_get("cls") != "") s += "<br><b>" + L("Классы цепей подняты до минимума", "Net classes raised to the minimum") + "</b> <font color=\"#7f8c8d\">(" +
                                   L("дорожка/зазор/сверло, мм", "track/space/drill, mm") + ")</font><br>" + replace_all(st_get("cls"), "\n", "<br>");
     if (st_get("inst") != "") s += "<br>" + st_get("inst") + "<br>";
+    if (st_get("grid") != "") s += st_get("grid") + "<br>";
     s += "<hr><b>DRC</b><br>";
     if (!checked) s += L("Fusion не сообщил результат проверки — откройте DRC вручную.", "Fusion reported no DRC result — open DRC manually.") + "<br>";
     else if (!n_act) s += "<font color=\"#1e8449\"><b>" + L("Ошибок нет", "No errors") + "</b></font>" + (n_warn ? " · " + L("предупреждений", "warnings") + ": " + istr(n_warn) : "") +
@@ -725,9 +728,7 @@ if (!board) {
 }
 
 js_scan();
-js_home = home_from(argv[0]);
-if (js_home == "") js_home = home_from(js_bname);
-if (js_home == "") js_home = home_from(path_dru[0]);
+js_home = local_home();
 if (js_home != "") runner_init(js_home + "/AppData/Local/Temp");
 string work = js_home != "" ? js_home + "/AppData/Local/dmxon_jlc" : js_dir(filedir(argv[0])) + "/_tmp";
 
@@ -755,7 +756,10 @@ if (any0 % 2) any0++;
 js_detect = any0;
 
 // настройки: прошлый выбор + аргументы
-int o_batch = 0, o_class = 1, o_install = 1, o_fabkit = 1;
+int o_batch = 0, o_class = 1, o_install = 1, o_fabkit = 1, o_grid = 1;
+// сетка точками: плата в мм (1 и альтернативная 0.1), схема в дюймах (0.1 и 0.025)
+string JR_GRID_BRD = "GRID MM 1 1 DOTS ON ALT MM 0.1 MM";
+string JR_GRID_SCH = "GRID INCH 0.1 1 DOTS ON ALT INCH 0.025 INCH";
 jr_prof   = strtol(cfgget(js_key("prof"), "0"));
 jr_thick  = strtod(cfgget(js_key("thick"), "1.6"));
 jr_oo     = strtod(cfgget(js_key("outer"), "1"));
@@ -766,6 +770,7 @@ js_mask   = cfgget(FABKIT_ID + ".mask", "Green");
 o_class   = strtol(cfgget(js_key("class"), "1"));
 o_install = strtol(cfgget(js_key("install"), "1"));
 o_fabkit  = strtol(cfgget(js_key("fabkit"), "1"));
+o_grid    = strtol(cfgget(js_key("grid"), "1"));
 jr_n = js_detect > 8 ? 8 : js_detect;
 
 for (int a = 3; a < argc; a++) {
@@ -786,6 +791,7 @@ for (int a = 3; a < argc; a++) {
     else if (k == "-noclass") o_class = 0;
     else if (k == "-noinstall") o_install = 0;
     else if (k == "-nofabkit") o_fabkit = 0;
+    else if (k == "-nogrid") o_grid = 0;
     else if (k == "-lang") { int li = lang_index(v); if (li >= 0) ui_lang = li; a++; }
     else if (k == "-std") { int si = std_index(v); if (si >= 0) doc_std = si; a++; }
 }
@@ -813,7 +819,9 @@ string js_user_dir(int kind)
         if (p == "") break;
         p = js_dir(p);
         string u = strlwr(p);
-        if (strstr(u, "/webdeploy/") < 0 && strstr(u, "/program files") < 0 && strstr(u, "/appdata/local/autodesk") < 0) return p;
+        // только папки этой машины: список приходит из общих настроек аккаунта
+        int here = home_from(p) != "" ? home_here(p) != "" : file_exists(p);
+        if (here && strstr(u, "/webdeploy/") < 0 && strstr(u, "/program files") < 0 && strstr(u, "/appdata/local/autodesk") < 0) return p;
         i++;
     }
     if (js_home == "") return "";
@@ -890,8 +898,9 @@ while (!o_batch) {
                 dlgCheckBox(L("Переходные под маской", "Tented vias"), jr_tented) { js_apply_sel(); dlgRedisplay(); }
                 dlgCheckBox(L("Панель V-cut: медь от края 0.4 мм", "V-cut panel: copper 0.4 mm from edge"), jr_vcut) { js_apply_sel(); dlgRedisplay(); }
                 dlgCheckBox(L("Классы цепей не ниже минимума", "Net classes not below the minimum"), o_class);
-                dlgCheckBox(L("Пакет правил и CAM — в Документы/EAGLE", "Rule pack and CAM into Documents/EAGLE"), o_install);
+                dlgCheckBox(L("Пакет правил и CAM — в папку правил", "Rule pack and CAM into the rules folder"), o_install);
                 dlgCheckBox(L("Толщину и маску — в dmxON FabKit", "Thickness and mask to dmxON FabKit"), o_fabkit);
+                dlgCheckBox(L("Сетка точками: плата 1 / 0.1 мм, схема 0.1″", "Dot grid: board 1 / 0.1 mm, schematic 0.1″"), o_grid);
             }
         }
         dlgHBoxLayout {
@@ -935,6 +944,7 @@ if (!o_batch) {
     cfgset(js_key("class"), istr(o_class));
     cfgset(js_key("install"), istr(o_install));
     cfgset(js_key("fabkit"), istr(o_fabkit));
+    cfgset(js_key("grid"), istr(o_grid));
 }
 
 // ---- только файлы: правила и задание CAM в выбранную папку
@@ -996,6 +1006,17 @@ st_set("stdline", js_std_txt());
 st_set("cls", js_cls_txt);
 st_set("clsback", js_cls_back);
 st_set("inst", inst);
+// сетка: плата — в цепочке команд; схема — отдельный документ, её переключает надстройка dmxON
+string gtxt = "";
+if (o_grid) {
+    gtxt = L("Сетка точками: плата 1 мм (альтернативная 0.1 мм)", "Dot grid: board 1 mm (alternate 0.1 mm)");
+    if (addin_alive()) {
+        addin_request("grid", ",\"cmd\":" + json_s(JR_GRID_SCH));
+        gtxt += " · " + L("схема 0.1″ (альтернативная 0.025″)", "schematic 0.1″ (alternate 0.025″)");
+    }
+    else gtxt += " · " + L("схема: надстройка dmxON не запущена — в схеме выполните", "schematic: the dmxON add-in is not running — in the schematic run") + " <tt>" + JR_GRID_SCH + "</tt>";
+}
+st_set("grid", gtxt);
 string wtxt = "";
 string wr[];
 int nwr = strsplit(wr, jr_warns, '\n');
@@ -1003,6 +1024,7 @@ for (int w1 = 0; w1 < nwr; w1++)
     if (wr[w1] != "") wtxt += "<font color=\"#b9770e\">• " + wr[w1] + "</font>\n";
 st_set("warn", wtxt);
 st_seti("prof", jr_prof);
+st_seti("lang", ui_lang);
 st_set("vd", num(jr_vd));
 st_seti("npf", n_pf);
 for (int i = 0; i < n_pf; i++) {
@@ -1012,6 +1034,7 @@ for (int i = 0; i < n_pf; i++) {
 st_save(stfile);
 
 string cmd = "DRC LOAD " + js_cq(dru) + ";\n";
+if (o_grid) cmd += JR_GRID_BRD + ";\n";
 cmd += js_cls_cmd;
 cmd += js_refresh();
 cmd += "RUN " + js_cq(argv[0]) + " -summary " + js_cq(stfile) + ";\n";

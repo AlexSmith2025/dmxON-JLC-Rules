@@ -48,6 +48,7 @@
 | 🌐 | **5 languages**: English, Russian, Spanish, German, Polish — pick one in the dialog; the rule files carry their description in all five |
 | 📐 | **ISO or GOST**: a Standard selector next to the language, shared with dmxON FabKit; the preview and the summary name IPC-2221C / IPC-6012F Class 2 / IPC-A-600M or the **GOST R 53429-2009 accuracy class** for your track and space |
 | 🧩 | **dmxON tab in Fusion** (add-in): JLC Rules, FabKit, backup of the whole design folder and updates from GitHub in one click; the rule pack and CAM jobs are registered in Fusion's lists |
+| ▦ | **Dot grid** set with the rules: board 1 mm (alternate 0.1 mm, Alt), schematic 0.1″ (alternate 0.025″) |
 
 ---
 
@@ -71,6 +72,8 @@ Older or newer Fusion builds usually work too; if something breaks after a Fusio
 3. **Restart Fusion once.** The PCB and schematic editors get a **dmxON** tab, `dmxON_JLC_Setup` is in **Run ULP**, the rule pack in **DRC → Load…** and the CAM jobs in the CAM list.
 
 The installer copies the project to `Documents\dmxON\dmxON-JLC-Rules` and installs the **dmxON add-in** (`%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\dmxON`), which puts the dmxON folders first in Fusion's ULP, design rules and CAM lists (Preferences → General → Electronics → Directory) and repairs them after Fusion updates; Fusion's built-in folders stay. Running `INSTALL.ulp` again updates the files; **Remove** deletes the copied project and, with the last dmxON tool, the add-in. Without a restart: **Utilities → Add-Ins → Scripts and Add-Ins → dmxON → Run**.
+
+**Several computers.** Fusion shares its preferences across every computer of your Autodesk account. The add-in therefore writes the folders as `$HOME\dmxON\…` and `$EAGLEDIR\…` — Fusion expands them on each computer to its own Documents and program folder — so the lists stay valid everywhere. Run `INSTALL.ulp` once on every computer (or **dmxON → Updates** where the tab already exists) so the files are there.
 
 ---
 
@@ -101,8 +104,9 @@ Best run it **before routing** (so routing follows JLCPCB rules from the start) 
 | **Tented vias** | vias drilled up to 0.5 mm are covered by solder mask (like «Tented» on the order page) |
 | **V-cut panel** | copper at least 0.4 mm from the board edge |
 | **Net classes not below the minimum** | raises classes whose width, clearance or drill is below the profile; class 0 gets the minimum as the routing default |
-| **Rule pack and CAM into Documents/EAGLE** | all 12 rule files, the file for your board and the CAM job go to `Documents\EAGLE\design rules` and `\cam`; nothing is written into the Fusion program folder |
+| **Rule pack and CAM into the rules folder** | all 12 rule files, the file for your board and the CAM job go to the first design-rules / CAM folder of Fusion on this computer: `Documents\dmxON\dmxON-JLC-Rules\rules` after installing (without the installer `Documents\EAGLE\design rules` and `\cam`); nothing is written into the Fusion program folder |
 | **Thickness and mask to dmxON FabKit** | [dmxON FabKit](https://github.com/AlexSmith2025/dmxON-FabKit-Fusion-Electronics) takes these values for the order |
+| **Dot grid: board 1 / 0.1 mm, schematic 0.1″** | board: 1 mm dot grid with 0.1 mm as the alternate grid (hold Alt); schematic: 0.1″ dot grid (alternate 0.025″). The schematic is switched by the dmxON add-in; without it the summary shows the command to run in the schematic. `GRID LAST` brings back the previous grid |
 
 Buttons: **Apply** · **Files only…** (write `.dru` and `.cam` for the chosen settings into any folder, the board is not touched) · **Restore previous rules** (after a previous setup) · **Cancel**.
 
@@ -186,11 +190,11 @@ Before every run the board's current rules are saved to `%LOCALAPPDATA%\dmxon_jl
 ## Batch mode
 
 ```
-RUN dmxON_JLC_Setup.ulp -batch [-std iso|gost] [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl]
+RUN dmxON_JLC_Setup.ulp -batch [-std iso|gost] [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-nogrid] [-lang en|ru|es|de|pl]
 RUN dmxON_JLC_Setup.ulp -export <folder>
 ```
 
-`-vcut` copper 0.4 mm from the edge · `-open` untented vias · `-noclass` / `-noinstall` / `-nofabkit` skip classes / pack / FabKit · `-lang` language of the summary · `-export` only writes the pack (12 `.dru` + 4 `.cam`), no board needed. Batch settings are not remembered. · `-std iso|gost` standard
+`-vcut` copper 0.4 mm from the edge · `-open` untented vias · `-noclass` / `-noinstall` / `-nofabkit` skip classes / pack / FabKit · `-lang` language of the summary · `-export` only writes the pack (12 `.dru` + 4 `.cam`), no board needed. Batch settings are not remembered. · `-std iso|gost` standard · `-nogrid` keep the grid
 
 ---
 
@@ -217,13 +221,14 @@ Workflow: `dmxON_JLC_Setup` (rules, stack-up, DRC clean) → **save the board** 
 |---|---|
 | No **dmxON** tab after installing | restart Fusion once, or start the add-in: **Utilities → Add-Ins → Scripts and Add-Ins → dmxON → Run** |
 | How do I update? | **dmxON → Updates** checks GitHub and installs new versions; the add-in also checks once a day |
+| On another computer the rules or ULPs are not found, the paths point to the first computer | Fusion shares its preferences across your Autodesk account. Update to JLC Rules 1.3.0 / FabKit 2.2.1 (add-in 1.1.0) and run `INSTALL.ulp` once on that computer: the folders are then stored as `$HOME\dmxON\…` and work on every computer |
 | Wrong layer count detected | the setup reads the board's stack-up and the copper on its layers; pick the right number in the list |
 | «Layer N is outside the stack-up but holds: …» | the finding lists what is on that layer; move it off the layer or choose more layers |
 | «Drill Size» errors | in Standard and Dense, holes under 0.3 mm are errors because JLCPCB charges for them; enlarge them or choose Extreme |
 | «Drill Clearance» errors | holes closer than the profile's hole-to-hole distance (0.25 / 0.20 mm) |
 | Many «copper to edge» errors | Standard keeps 0.3 mm (V-cut 0.4 mm); for a dense board use Dense (0.25) or Extreme (0.2) |
 | Pad rings got larger | the rules set the JLCPCB minimum ring; a larger library pad is kept |
-| Where are the files? | board rules and backups — `%LOCALAPPDATA%\dmxon_jlc`; the pack — `Documents\EAGLE\design rules` and `\cam` |
+| Where are the files? | board rules and backups — `%LOCALAPPDATA%\dmxon_jlc`; the pack — `Documents\dmxON\dmxON-JLC-Rules\rules` (without the installer `Documents\EAGLE\design rules` and `\cam`) |
 
 ---
 

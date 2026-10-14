@@ -38,6 +38,8 @@ detected	определено	detectado	erkannt	wykryto
 different nets overlap	перекрытие разных цепей	solape de redes distintas	Überlappung verschiedener Netze	nakładanie się różnych sieci
 dmxON JLC Rules removed.	dmxON JLC Rules удалён.	dmxON JLC Rules eliminado.	dmxON JLC Rules entfernt.	dmxON JLC Rules usunięty.
 Done.	Готово.	Hecho.	Fertig.	Gotowe.
+Dot grid: board 1 / 0.1 mm, schematic 0.1″	Сетка точками: плата 1 / 0.1 мм, схема 0.1″	Rejilla de puntos: placa 1 / 0,1 mm, esquema 0,1″	Punktraster: Platine 1 / 0,1 mm, Schaltplan 0,1″	Siatka punktowa: płytka 1 / 0,1 mm, schemat 0,1″
+Dot grid: board 1 mm (alternate 0.1 mm)	Сетка точками: плата 1 мм (альтернативная 0.1 мм)	Rejilla de puntos: placa 1 mm (alternativa 0,1 mm)	Punktraster: Platine 1 mm (alternativ 0,1 mm)	Siatka punktowa: płytka 1 mm (alternatywna 0,1 mm)
 drill below the minimum	сверло меньше минимума	taladro por debajo del mínimo	Bohrung unter dem Minimum	wiercenie poniżej minimum
 Drills below {0} mm: holes under 0.3 mm cost extra at JLCPCB — enlarge them or choose the Extreme profile.	Сверло меньше {0} мм: у JLCPCB отверстия меньше 0.3 мм стоят дороже — увеличьте сверло или выберите профиль «Предельный».	Taladros de menos de {0} mm: en JLCPCB los agujeros de menos de 0.3 mm tienen recargo — agrándelos o elija el perfil Extremo.	Bohrungen unter {0} mm: Löcher unter 0.3 mm kosten bei JLCPCB Aufpreis — vergrößern oder Profil Extrem wählen.	Wiercenia poniżej {0} mm: otwory mniejsze niż 0.3 mm są w JLCPCB dodatkowo płatne — powiększ je lub wybierz profil Ekstremalny.
 edge	до края	borde	Rand	krawędź
@@ -102,9 +104,11 @@ Restart Fusion — the dmxON tab appears in the PCB and schematic editors, and {
 Restore previous rules	Вернуть прежние правила	Restaurar reglas anteriores	Bisherige Regeln wiederherstellen	Przywróć poprzednie reguły
 ring	поясок	anillo	Restring	pierścień
 Rule pack	Пакет правил	Paquete de reglas	Regelpaket	Pakiet reguł
-Rule pack and CAM into Documents/EAGLE	Пакет правил и CAM — в Документы/EAGLE	Paquete de reglas y CAM en Documentos/EAGLE	Regelpaket und CAM nach Dokumente/EAGLE	Pakiet reguł i CAM do Dokumenty/EAGLE
+Rule pack and CAM into the rules folder	Пакет правил и CAM — в папку правил	Paquete de reglas y CAM en la carpeta de reglas	Regelpaket und CAM in den Regelordner	Pakiet reguł i CAM do folderu reguł
 Rule pack written	Пакет правил записан	Paquete de reglas guardado	Regelpaket geschrieben	Pakiet reguł zapisany
 Run from the board editor (or with -export <folder> for the rule pack only).	Запустите из редактора платы (или с ключом -export <папка> — только пакет правил).	Ejecútelo desde el editor de placa (o con -export <carpeta> solo para el paquete de reglas).	Im Board-Editor starten (oder mit -export <Ordner> nur für das Regelpaket).	Uruchom w edytorze płytki (lub z -export <folder> tylko dla pakietu reguł).
+schematic 0.1″ (alternate 0.025″)	схема 0.1″ (альтернативная 0.025″)	esquema 0,1″ (alternativa 0,025″)	Schaltplan 0,1″ (alternativ 0,025″)	schemat 0,1″ (alternatywna 0,025″)
+schematic: the dmxON add-in is not running — in the schematic run	схема: надстройка dmxON не запущена — в схеме выполните	esquema: el complemento dmxON no está en ejecución; en el esquema ejecute	Schaltplan: Das dmxON-Add-in läuft nicht — im Schaltplan ausführen:	schemat: dodatek dmxON nie działa — w schemacie wykonaj
 Silkscreen lines thinner than 0.15 mm: {0} (thinnest {1}) — will print thin or broken.	Линий шелкографии тоньше 0.15 мм: {0} (самая тонкая {1}) — напечатаются тонко или с разрывами.	Líneas de serigrafía de menos de 0.15 mm: {0} (la más fina {1}) — se imprimirán finas o cortadas.	Bestückungsdrucklinien dünner als 0.15 mm: {0} (dünnste {1}) — werden dünn oder lückenhaft gedruckt.	Linie opisu cieńsze niż 0.15 mm: {0} (najcieńsza {1}) — wydrukują się cienko lub z przerwami.
 silkscreen near exposed copper	шелкография у открытой меди	serigrafía junto a cobre expuesto	Bestückungsdruck an offenem Kupfer	opis przy odsłoniętej miedzi
 Silkscreen texts below 1.0 mm: {0} (smallest {1}) — may be unreadable.	Надписей шелкографии ниже 1.0 мм: {0} (самая мелкая {1}) — могут не читаться.	Textos de serigrafía de menos de 1.0 mm: {0} (el menor {1}) — pueden no leerse.	Bestückungsdrucktexte unter 1.0 mm: {0} (kleinster {1}) — evtl. unleserlich.	Napisy opisu mniejsze niż 1.0 mm: {0} (najmniejszy {1}) — mogą być nieczytelne.

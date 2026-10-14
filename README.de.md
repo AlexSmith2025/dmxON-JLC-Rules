@@ -48,6 +48,7 @@
 | 🌐 | **5 Sprachen**: Englisch, Russisch, Spanisch, Deutsch, Polnisch — Auswahl im Dialog; die Regeldateien tragen ihre Beschreibung in allen fünf |
 | 📐 | **ISO oder GOST**: Normwahl neben der Sprache, gemeinsam mit dmxON FabKit; Vorschau und Zusammenfassung nennen IPC-2221C / IPC-6012F Klasse 2 / IPC-A-600M oder die **Genauigkeitsklasse nach GOST R 53429-2009** für Ihre Leiterbahn und Ihren Abstand |
 | 🧩 | **Reiter dmxON in Fusion** (Add-in): JLC Rules, FabKit, Sicherung des gesamten Designordners und Updates von GitHub mit einem Klick; Regelpaket und CAM-Jobs stehen in den Listen von Fusion |
+| ▦ | **Punktraster** zusammen mit den Regeln: Platine 1 mm (alternativ 0,1 mm, Alt), Schaltplan 0,1″ (alternativ 0,025″) |
 
 ---
 
@@ -71,6 +72,8 @@
 3. **Fusion einmal neu starten.** Platinen- und Schaltplan-Editor erhalten den Reiter **dmxON**, `dmxON_JLC_Setup` steht unter **Run ULP**, das Regelpaket unter **DRC → Load…** und die CAM-Jobs in der CAM-Liste.
 
 Der Installer kopiert das Projekt nach `Dokumente\dmxON\dmxON-JLC-Rules` und installiert das **dmxON-Add-in** (`%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\dmxON`), das die dmxON-Ordner an die Spitze der ULP-, Regel- und CAM-Listen von Fusion setzt (Preferences → General → Electronics → Directory) und sie nach Fusion-Updates repariert; die eingebauten Ordner bleiben. Ein erneuter Start von `INSTALL.ulp` aktualisiert die Dateien; **Entfernen** löscht das kopierte Projekt und mit dem letzten dmxON-Werkzeug auch das Add-in. Ohne Neustart: **Utilities → Add-Ins → Scripts and Add-Ins → dmxON → Run**.
+
+**Mehrere Computer.** Fusion teilt seine Einstellungen zwischen allen Computern Ihres Autodesk-Kontos. Deshalb schreibt das Add-in die Ordner als `$HOME\dmxON\…` und `$EAGLEDIR\…` — Fusion setzt dafür auf jedem Computer dessen eigene Dokumente und Programmordner ein —, und die Listen stimmen überall. `INSTALL.ulp` auf jedem Computer einmal ausführen (oder **dmxON → Updates**, wo der Reiter schon da ist), damit die Dateien dort vorhanden sind.
 
 ---
 
@@ -101,8 +104,9 @@ Am besten **vor dem Routen** ausführen (dann folgt das Routing von Anfang an de
 | **Abgedeckte Vias** | Vias bis 0.5 mm Bohrung werden vom Lötstopp abgedeckt (wie «Tented» auf der Bestellseite) |
 | **V-Cut-Nutzen** | Kupfer mindestens 0.4 mm vom Platinenrand |
 | **Netzklassen nicht unter dem Minimum** | hebt Klassen an, deren Breite, Abstand oder Bohrung unter dem Profil liegt; Klasse 0 erhält das Minimum als Routing-Standard |
-| **Regelpaket und CAM nach Dokumente/EAGLE** | alle 12 Regeldateien, die Datei für Ihre Platine und der CAM-Job landen in `Dokumente\EAGLE\design rules` und `\cam`; in den Fusion-Programmordner wird nichts geschrieben |
+| **Regelpaket und CAM in den Regelordner** | alle 12 Regeldateien, die Datei für Ihre Platine und der CAM-Job landen im ersten Regel- bzw. CAM-Ordner von Fusion auf diesem Computer: nach der Installation `Dokumente\dmxON\dmxON-JLC-Rules\rules` (ohne Installer `Dokumente\EAGLE\design rules` und `\cam`); in den Fusion-Programmordner wird nichts geschrieben |
 | **Dicke und Lötstopp an dmxON FabKit** | [dmxON FabKit](https://github.com/AlexSmith2025/dmxON-FabKit-Fusion-Electronics) übernimmt diese Werte für die Bestellung |
+| **Punktraster: Platine 1 / 0,1 mm, Schaltplan 0,1″** | Platine: Punktraster 1 mm mit 0,1 mm als alternativem Raster (mit Alt); Schaltplan: Punktraster 0,1″ (alternativ 0,025″). Den Schaltplan stellt das dmxON-Add-in um; ohne Add-in zeigt die Zusammenfassung den Befehl für den Schaltplan. `GRID LAST` stellt das vorherige Raster wieder her |
 
 Schaltflächen: **Anwenden** · **Nur Dateien…** (schreibt `.dru` und `.cam` für die gewählten Einstellungen in einen beliebigen Ordner, die Platine bleibt unberührt) · **Bisherige Regeln wiederherstellen** (nach einem früheren Setup) · **Abbrechen**.
 
@@ -186,11 +190,11 @@ Vor jedem Lauf werden die aktuellen Regeln der Platine in `%LOCALAPPDATA%\dmxon_
 ## Stapelbetrieb
 
 ```
-RUN dmxON_JLC_Setup.ulp -batch [-std iso|gost] [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl]
+RUN dmxON_JLC_Setup.ulp -batch [-std iso|gost] [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-nogrid] [-lang en|ru|es|de|pl]
 RUN dmxON_JLC_Setup.ulp -export <Ordner>
 ```
 
-`-vcut` Kupfer 0.4 mm vom Rand · `-open` nicht abgedeckte Vias · `-noclass` / `-noinstall` / `-nofabkit` Klassen / Paket / FabKit auslassen · `-lang` Sprache der Zusammenfassung · `-export` schreibt nur das Paket (12 `.dru` + 4 `.cam`), keine Platine nötig. Einstellungen des Stapelbetriebs werden nicht gespeichert. · `-std iso|gost` Norm
+`-vcut` Kupfer 0.4 mm vom Rand · `-open` nicht abgedeckte Vias · `-noclass` / `-noinstall` / `-nofabkit` Klassen / Paket / FabKit auslassen · `-lang` Sprache der Zusammenfassung · `-export` schreibt nur das Paket (12 `.dru` + 4 `.cam`), keine Platine nötig. Einstellungen des Stapelbetriebs werden nicht gespeichert. · `-std iso|gost` Norm · `-nogrid` Raster nicht ändern
 
 ---
 
@@ -217,13 +221,14 @@ Ablauf: `dmxON_JLC_Setup` (Regeln, Lagenaufbau, DRC sauber) → **Platine speich
 |---|---|
 | Kein Reiter **dmxON** nach der Installation | Fusion einmal neu starten oder das Add-in starten: **Utilities → Add-Ins → Scripts and Add-Ins → dmxON → Run** |
 | Wie aktualisieren? | **dmxON → Updates** prüft GitHub und installiert neue Versionen; das Add-in prüft zudem täglich |
+| Auf einem anderen Computer werden Regeln oder ULPs nicht gefunden, die Pfade zeigen auf den ersten Computer | Fusion teilt seine Einstellungen im ganzen Autodesk-Konto. Auf JLC Rules 1.3.0 / FabKit 2.2.1 (Add-in 1.1.0) aktualisieren und `INSTALL.ulp` auf diesem Computer einmal ausführen: Die Ordner stehen dann als `$HOME\dmxON\…` in den Einstellungen und funktionieren auf jedem Computer |
 | Falsche Lagenzahl erkannt | das Setup liest den Lagenaufbau der Platine und das Kupfer auf ihren Lagen; die richtige Zahl in der Liste wählen |
 | «Lage N liegt außerhalb des Aufbaus, enthält aber: …» | der Befund listet, was auf dieser Lage liegt; es von der Lage entfernen oder mehr Lagen wählen |
 | Fehler «Drill Size» | in Standard und Dicht sind Bohrungen unter 0.3 mm Fehler, weil JLCPCB sie extra berechnet; vergrößern oder Extrem wählen |
 | Fehler «Drill Clearance» | Bohrungen näher als der Bohrabstand des Profils (0.25 / 0.20 mm) |
 | Viele Fehler «Kupfer zum Rand» | Standard hält 0.3 mm (V-Cut 0.4 mm); für eine dichte Platine Dicht (0.25) oder Extrem (0.2) verwenden |
 | Pad-Restringe wurden größer | die Regeln setzen den JLCPCB-Mindestrestring; ein größeres Bibliotheks-Pad bleibt erhalten |
-| Wo liegen die Dateien? | Platinenregeln und Sicherungen — `%LOCALAPPDATA%\dmxon_jlc`; das Paket — `Dokumente\EAGLE\design rules` und `\cam` |
+| Wo liegen die Dateien? | Platinenregeln und Sicherungen — `%LOCALAPPDATA%\dmxon_jlc`; das Paket — `Dokumente\dmxON\dmxON-JLC-Rules\rules` (ohne Installer `Dokumente\EAGLE\design rules` und `\cam`) |
 
 ---
 

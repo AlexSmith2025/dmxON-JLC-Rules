@@ -48,6 +48,7 @@
 | 🌐 | **5 idiomas**: inglés, ruso, español, alemán y polaco — se elige en el diálogo; los archivos de reglas llevan su descripción en los cinco |
 | 📐 | **ISO o GOST**: selector de norma junto al idioma, compartido con dmxON FabKit; la vista previa y el resumen citan IPC-2221C / IPC-6012F clase 2 / IPC-A-600M o la **clase de precisión GOST R 53429-2009** para su pista y separación |
 | 🧩 | **Pestaña dmxON en Fusion** (complemento): JLC Rules, FabKit, copia de toda la carpeta del diseño y actualizaciones desde GitHub con un clic; el paquete de reglas y los trabajos CAM quedan en las listas de Fusion |
+| ▦ | **Rejilla de puntos** junto con las reglas: placa 1 mm (alternativa 0,1 mm, Alt), esquema 0,1″ (alternativa 0,025″) |
 
 ---
 
@@ -71,6 +72,8 @@ Las versiones anteriores o posteriores de Fusion suelen funcionar también; si a
 3. **Reinicie Fusion una vez.** Los editores de placa y esquema tendrán la pestaña **dmxON**, `dmxON_JLC_Setup` estará en **Run ULP**, el paquete de reglas en **DRC → Load…** y los trabajos CAM en la lista CAM.
 
 El instalador copia el proyecto en `Documentos\dmxON\dmxON-JLC-Rules` e instala el **complemento dmxON** (`%APPDATA%\Autodesk\Autodesk Fusion 360\API\AddIns\dmxON`), que pone las carpetas dmxON las primeras en las listas de ULP, reglas y CAM de Fusion (Preferences → General → Electronics → Directory) y las repara tras las actualizaciones; las carpetas integradas se mantienen. Ejecutar `INSTALL.ulp` de nuevo actualiza los archivos; **Eliminar** borra el proyecto copiado y, con la última herramienta dmxON, el complemento. Sin reiniciar: **Utilities → Add-Ins → Scripts and Add-Ins → dmxON → Run**.
+
+**Varios ordenadores.** Fusion comparte sus preferencias entre todos los ordenadores de su cuenta de Autodesk. Por eso el complemento guarda las carpetas como `$HOME\dmxON\…` y `$EAGLEDIR\…`: Fusion las expande en cada ordenador a sus propios Documentos y carpeta del programa, y las listas valen en todos. Ejecute `INSTALL.ulp` una vez en cada ordenador (o **dmxON → Actualizar** donde ya exista la pestaña) para que los archivos estén allí.
 
 ---
 
@@ -101,8 +104,9 @@ Lo mejor es ejecutarlo **antes de rutear** (así el ruteo sigue las reglas de JL
 | **Vías cubiertas** | las vías de hasta 0.5 mm de taladro quedan cubiertas por la máscara (como «Tented» en la página del pedido) |
 | **Panel V-cut** | cobre a 0.4 mm como mínimo del borde de la placa |
 | **Clases de red no por debajo del mínimo** | sube las clases cuyo ancho, separación o taladro están por debajo del perfil; la clase 0 recibe el mínimo como valor de ruteo por defecto |
-| **Paquete de reglas y CAM en Documentos/EAGLE** | los 12 archivos de reglas, el de su placa y el trabajo CAM van a `Documentos\EAGLE\design rules` y `\cam`; no se escribe nada en la carpeta del programa Fusion |
+| **Paquete de reglas y CAM en la carpeta de reglas** | los 12 archivos de reglas, el de su placa y el trabajo CAM van a la primera carpeta de reglas / CAM de Fusion en este ordenador: tras instalar, `Documentos\dmxON\dmxON-JLC-Rules\rules` (sin el instalador, `Documentos\EAGLE\design rules` y `\cam`); no se escribe nada en la carpeta del programa Fusion |
 | **Espesor y máscara a dmxON FabKit** | [dmxON FabKit](https://github.com/AlexSmith2025/dmxON-FabKit-Fusion-Electronics) toma estos valores para el pedido |
+| **Rejilla de puntos: placa 1 / 0,1 mm, esquema 0,1″** | placa: rejilla de puntos de 1 mm con 0,1 mm como rejilla alternativa (con Alt); esquema: rejilla de puntos de 0,1″ (alternativa 0,025″). El esquema lo cambia el complemento dmxON; sin él, el resumen muestra el comando para el esquema. `GRID LAST` devuelve la rejilla anterior |
 
 Botones: **Aplicar** · **Solo archivos…** (escribe `.dru` y `.cam` para los ajustes elegidos en cualquier carpeta; la placa no se toca) · **Restaurar reglas anteriores** (tras una configuración previa) · **Cancelar**.
 
@@ -186,11 +190,11 @@ Antes de cada ejecución, las reglas actuales de la placa se guardan en `%LOCALA
 ## Modo por lotes
 
 ```
-RUN dmxON_JLC_Setup.ulp -batch [-std iso|gost] [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-lang en|ru|es|de|pl]
+RUN dmxON_JLC_Setup.ulp -batch [-std iso|gost] [-layers 2|4|6|8] [-profile Standard|Dense|Extreme] [-thick 1.6] [-outer 1|2] [-inner 0.5|1|2] [-mask Green] [-vcut] [-open] [-noclass] [-noinstall] [-nofabkit] [-nogrid] [-lang en|ru|es|de|pl]
 RUN dmxON_JLC_Setup.ulp -export <carpeta>
 ```
 
-`-vcut` cobre a 0.4 mm del borde · `-open` vías sin cubrir · `-noclass` / `-noinstall` / `-nofabkit` omitir clases / paquete / FabKit · `-lang` idioma del resumen · `-export` solo escribe el paquete (12 `.dru` + 4 `.cam`), sin placa. Los ajustes del modo por lotes no se recuerdan. · `-std iso|gost` norma
+`-vcut` cobre a 0.4 mm del borde · `-open` vías sin cubrir · `-noclass` / `-noinstall` / `-nofabkit` omitir clases / paquete / FabKit · `-lang` idioma del resumen · `-export` solo escribe el paquete (12 `.dru` + 4 `.cam`), sin placa. Los ajustes del modo por lotes no se recuerdan. · `-std iso|gost` norma · `-nogrid` no cambiar la rejilla
 
 ---
 
@@ -217,13 +221,14 @@ Flujo: `dmxON_JLC_Setup` (reglas, pila, DRC limpio) → **guardar la placa** (Ct
 |---|---|
 | No aparece la pestaña **dmxON** tras instalar | reinicie Fusion una vez o inicie el complemento: **Utilities → Add-Ins → Scripts and Add-Ins → dmxON → Run** |
 | ¿Cómo actualizar? | **dmxON → Actualizar** consulta GitHub e instala las versiones nuevas; el complemento también lo comprueba a diario |
+| En otro ordenador no se encuentran las reglas ni los ULP; las rutas apuntan al primer ordenador | Fusion comparte sus preferencias en toda la cuenta de Autodesk. Actualice a JLC Rules 1.3.0 / FabKit 2.2.1 (complemento 1.1.0) y ejecute `INSTALL.ulp` una vez en ese ordenador: las carpetas se guardan como `$HOME\dmxON\…` y funcionan en cualquier ordenador |
 | Se detectó un número de capas incorrecto | el configurador lee la pila de la placa y el cobre de sus capas; elija el número correcto en la lista |
 | «La capa N está fuera de la pila, pero contiene: …» | la observación enumera lo que hay en esa capa; quítelo de ella o elija más capas |
 | Errores «Drill Size» | en Estándar y Denso, los taladros de menos de 0.3 mm son errores porque JLCPCB los cobra aparte; agrándelos o elija Extremo |
 | Errores «Drill Clearance» | taladros más cercanos que la distancia del perfil (0.25 / 0.20 mm) |
 | Muchos errores de «cobre al borde» | Estándar mantiene 0.3 mm (V-cut 0.4 mm); para una placa densa use Denso (0.25) o Extremo (0.2) |
 | Los anillos de los pads crecieron | las reglas fijan el anillo mínimo de JLCPCB; un pad de biblioteca mayor se mantiene |
-| ¿Dónde están los archivos? | reglas de la placa y copias — `%LOCALAPPDATA%\dmxon_jlc`; el paquete — `Documentos\EAGLE\design rules` y `\cam` |
+| ¿Dónde están los archivos? | reglas de la placa y copias — `%LOCALAPPDATA%\dmxon_jlc`; el paquete — `Documentos\dmxON\dmxON-JLC-Rules\rules` (sin el instalador, `Documentos\EAGLE\design rules` y `\cam`) |
 
 ---
 
