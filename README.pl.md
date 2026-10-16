@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip"><img src="https://img.shields.io/badge/%E2%AC%87%20Pobierz-dmxON--JLC--Rules.zip-b4744a?style=for-the-badge" alt="Pobierz najnowszą wersję"></a>
+  <a href="https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip"><img src="https://img.shields.io/badge/%E2%AC%87%20Pobierz-dmxON--JLC--Rules.zip-b4744a?style=for-the-badge" alt="Pobierz najnowszą wersję"></a> <a href="https://github.com/AlexSmith2025/dmxON-Setup-Fusion-Electronics/releases/latest/download/dmxON-Setup.exe"><img src="https://img.shields.io/badge/%E2%AC%87%20Installer-dmxON--Setup.exe-24574a?style=for-the-badge" alt="Download the installer dmxON-Setup.exe"></a>
 </p>
 
 <p align="center">
@@ -66,6 +66,8 @@ Starsze i nowsze wersje Fusion zwykle też działają; jeśli coś przestanie dz
 ---
 
 ## Instalacja
+
+**Najprościej:** [**pobierz `dmxON-Setup.exe`**](https://github.com/AlexSmith2025/dmxON-Setup-Fusion-Electronics/releases/latest/download/dmxON-Setup.exe) i uruchom — zainstaluje dmxON FabKit, dmxON JLC Rules i dodatek dmxON za jednym razem (najnowsze wersje z GitHuba, sprawdzanie SHA-256, bez uprawnień administratora; [dmxON Setup](https://github.com/AlexSmith2025/dmxON-Setup-Fusion-Electronics)). Albo ręcznie:
 
 1. [**Pobierz `dmxON-JLC-Rules.zip`**](https://github.com/AlexSmith2025/dmxON-JLC-Rules-Fusion-Electronics/releases/latest/download/dmxON-JLC-Rules.zip) i rozpakuj w dowolnym miejscu.
 2. W Fusion Electronics: **Automation → Run ULP → `INSTALL.ulp`** z rozpakowanego folderu, wybierz język i naciśnij **Zainstaluj**.
